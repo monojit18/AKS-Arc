@@ -1,0 +1,7 @@
+!.gitignore
+Archive
+Misc
+**/misc
+**/local.settings.json
+**/bin
+**/obj
