@@ -417,43 +417,36 @@ This is in continuation to this [Article] where we had describe the same for dep
     --name $appsvcKubeEnvironmentName
     ```
 
-#### High level Architcture
 
-Let us now delve into creating **Application Services** onto Azure and then deploying onto CAPZ cluster
 
-![capz-arc-hight-level](./Assets/capz-arc-hight-level.png)
+#### Use Case Flow
 
-This is what we would like achieve in this exercise on the Custom Location created above:
+##### Zip Images
 
-- Deploy a NodeJS API App - **PostAPIApp**
+![zipImages-app](./Assets/zipImages-app.png)
 
-- Deploy a .NetCore Function App - **ReceiveMessageApp**
+This is what we would like to achieve in this exercise on the Custom Location created above:
 
-- Deploy a Locally developed Blob triggered Logic App - **Workflow** Logic App
+- Deploy a .NetCore Http triggerred Function App - **ZipImagesArcApp**
 
-- Deploy an EventGrid topic **capz-k8s-cluster-egt**
+- Deploy a Locally developed Blob triggered Logic App - **NotifyZipArcLA** Logic App
+
+- Deploy an EventGrid topic **aks-k8s-arc-cluster-ext-eg-evg-topic**
 
 - **Test**
-
+  - Uplaod Images to the Blob -viz.  *bigimgeblob*
+  - Call Http triggererd function Url of *ZipImagesArcApp* passing the arrya iof image names in the 
   - Push an event to EventGrid topic from the NodeJS **PostAPIApp**
   - Check that the corresponding Subscription Endpoint (e.g. ***ReceiveMessageApp***) is fired!
   - Test **Workflow** Logic App with a Blob trigger
 
-  
-
-#### Use Case Flow
-
-![capz-arc-usecase-1](./Assets/capz-arc-usecase-1.png)
-
-
-
 #### App Services
 
-![app-service1](./Assets/app-service1.png)
+
 
 ​										**<u>Deploy Web App from project workspace - VSCode</u>**
 
-![app-service-2](./Assets/app-service-2.png)
+
 
 ​										**<u>Deploy Web App from Azure plugin - VSCode</u>**
 
@@ -483,13 +476,11 @@ This is what we would like achieve in this exercise on the Custom Location creat
 
 
 
-![function-2](./Assets/function-2.png)
-
 ​										**<u>Deploy Function App from project workspace - VSCode</u>**
 
 
 
-![function-1](./Assets/function-1.png)
+
 
 ​										**<u>Deploy Function App from Azure plugin - VSCode</u>**
 
@@ -508,13 +499,13 @@ This is what we would like achieve in this exercise on the Custom Location creat
 
 #### Logic App
 
-![logic-app-1](./Assets/logic-app-1.png)
+
 
 ​										**<u>Deploy Logic App from project workspace - VSCode</u>**
 
 
 
-![logic-app-2](./Assets/logic-app-2.png)
+
 
 ​										**<u>Deploy Logic App from Azure plugin - VSCode</u>**
 
@@ -533,27 +524,17 @@ This is what we would like achieve in this exercise on the Custom Location creat
 - Check *Deployments* and/or *Pods* of the App Service Namespace in the K8s cluster. All Pods should be in the running state
 - Uplaod some blob images and check that the Logic App worlflow gets triggered
 
-![logic-app-3](./Assets/logic-app-3.png)
 
-
-
-![svc-pods-1](./Assets/svc-pods-1.png)
 
 **<u>Pods in *App Service Extension namespace*</u>**
 
-![svc-pods-2](./Assets/svc-pods-2.png)
+
 
 **<u>Pods running the Application Services - *App Service, Azure Function and Logic App* (*Standard*)</u>**
 
 
 
 #### Event Grid
-
-![eventgrid-1](./Assets/eventgrid-1.png)
-
-![eventgrid-2](./Assets/eventgrid-2.png)
-
-![eventgrid-3](./Assets/eventgrid-3.png)
 
 - This exercise uses a simple *Event Grid Topic* - **PostTopic** for this purpose
 
@@ -599,7 +580,7 @@ This is what we would like achieve in this exercise on the Custom Location creat
 
   
 
-  ![eventgrid-5](./Assets/eventgrid-5.png)
+  
 
   **<u>Arc Enabled Services</u>**
 
