@@ -428,63 +428,19 @@ This is in continuation to this [Article] where we had describe the same for dep
 This is what we would like to achieve in this exercise on the Custom Location created above:
 
 - Deploy a .NetCore Http triggerred Function App - **ZipImagesArcApp**
-
 - Deploy a Locally developed Blob triggered Logic App - **NotifyZipArcLA** Logic App
-
 - Deploy an EventGrid topic **aks-k8s-arc-cluster-ext-eg-evg-topic**
-
 - **Test**
-  - Uplaod Images to the Blob -viz.  *bigimgeblob*
+  - Upload Images to the Blob -viz.  *bigimgeblob*
   - Call Http triggererd function Url of *ZipImagesArcApp* passing the arrya iof image names in the 
-  - Push an event to EventGrid topic from the NodeJS **PostAPIApp**
-  - Check that the corresponding Subscription Endpoint (e.g. ***ReceiveMessageApp***) is fired!
-  - Test **Workflow** Logic App with a Blob trigger
-
-#### App Services
-
-
-
-​										**<u>Deploy Web App from project workspace - VSCode</u>**
-
-
-
-​										**<u>Deploy Web App from Azure plugin - VSCode</u>**
-
-- This execise uses a simple API App in NodeJS - **PostAPIApp** for this purpose. One can use any App Service or Web API for this purpose
-
-- Visual Studio Code or Visual Studio both have easy integration with Azure Resource management. Any other IDE with appropriate plugins can be used as well. This exercise would use VSCode as an option
-
-- Open App Service root folder in Visual Studio Code
-
-- Right Click and **Deploy** to API App. Please note one can create the Web App/API App in the portal and then manage deployment from VSCode
-
-- VSCode would ask for a new App to be Created Or Deploy on an existing one
-
-- The Target Location step is extremely important - ***should be the <u>CustomLocation</u> created in earlier steps***
-
-- Once the steps are completed, comeback to Azure CLI
-
-- Check *Deployments* and/or *Pods* of the App Service Namespace in the K8s cluster. All Pods should be in the running state
-
-- Go to Azure Portal and Check the App Service resource; in the Overview blade it will show up the Web API access URL
-
-- Check the URL in te browser; use Postman or any REST client to call to test different paths of the API App
-
-  
+  - Push an event to EventGrid topic from PostMan or any other Rest client
+  - Check that the corresponding Subscription Endpoint (e.g. ***NotifyZipArcLA***) is fired!
 
 #### Function App
 
+![zipImages-app](./Assets/function-1.png)
 
-
-​										**<u>Deploy Function App from project workspace - VSCode</u>**
-
-
-
-
-
-​										**<u>Deploy Function App from Azure plugin - VSCode</u>**
-
-- This execise uses a simple *Http Triggerred* Azure Function in .NetCore - **PostMessageApp** for this purpose. One can use any type of Azure Function of their choice
+- This execise uses a simple *Http Triggerred* Azure Function in .NetCore - **ZipImagesArcApp** for this purpose. One can use any type of Azure Function of their choice
 - Visual Studio Code or Visual Studio both have easy integration with Azure Resource management. Any other IDE with appropriate plugins can be used as well. This exercise would use VSCode as an option
 - Open Function App  root folder in Visual Studio Code
 - Right Click and **Deploy** to Function App. Please note one can create the Function App in the portal and then manage deployment from VSCode
@@ -493,23 +449,17 @@ This is what we would like to achieve in this exercise on the Custom Location cr
 - Once the steps are completed, comeback to Azure CLI
 - Check *Deployments* and/or *Pods* of the App Service Namespace in the K8s cluster. All Pods should be in the running state
 - Go to Azure Portal and Check the Function App  resource; in the Overview blade it will show up the Web API access URL
-- Check the URL in te browser; use Postman or any REST client to call to test different paths of the Function App
-
-
+- Check the URL in the browser; use Postman or any REST client to call to test different paths of the Function App
 
 #### Logic App
 
+![logicapp-1](./Assets/logicapp-3.png)
 
+![logicapp-1](./Assets/logicapp-4.png)
 
-​										**<u>Deploy Logic App from project workspace - VSCode</u>**
+![logicapp-1](./Assets/logicapp-5.png)
 
-
-
-
-
-​										**<u>Deploy Logic App from Azure plugin - VSCode</u>**
-
-- This execise uses a simple *Blob Triggerred* Logic App Created Locally - **WorkflowApp** for this purpose
+- This execise uses a simple *Http Triggerred* Logic App Created Locally - **NotifyZipArcLA** for this purpose
 - Few points to note here on the choice of Creation path to Azure and subsequent Deployment onto K8s cluster
   - This Logic App type would be **<u>Standard</u>** and **Stateful** which is actually a **<u>Single Tenant Logic App</u>**; rather than the *Consumption* type Logic App which is *Multi-Tenant* Logic App
   - Currently the best way to achieve a seamless experiene end-to-end is to Create and Deploy Logic App Standard, Stateful type from Visual Studio Code itself
@@ -524,19 +474,17 @@ This is what we would like to achieve in this exercise on the Custom Location cr
 - Check *Deployments* and/or *Pods* of the App Service Namespace in the K8s cluster. All Pods should be in the running state
 - Uplaod some blob images and check that the Logic App worlflow gets triggered
 
-
-
-**<u>Pods in *App Service Extension namespace*</u>**
+![logicapp-1](./Assets/logicapp-1.png)
 
 
 
-**<u>Pods running the Application Services - *App Service, Azure Function and Logic App* (*Standard*)</u>**
+![logicapp-1](./Assets/logicapp-2.png)
 
 
 
 #### Event Grid
 
-- This exercise uses a simple *Event Grid Topic* - **PostTopic** for this purpose
+- This exercise uses a simple *Event Grid Topic* - **aks-k8s-arc-cluster-ext-eg-evg-topic** for this purpose
 
 - Set local varibales in Azure CLI
 
@@ -545,22 +493,6 @@ This is what we would like to achieve in this exercise on the Custom Location cr
   evgExtensionNamespace="$clusterName-evg-ns"
   evgTopicName="$clusterName-egt"
   evgSubscriptionName="$clusterName-evg-sub"
-  ```
-
-- **Deploy** a *PersistentVolume* using Helm chart
-
-  - The Storage Account created in earlier step while preparing for App Services can be used here as well as Persistent Storage for the K8s Cluster
-
-  - Used by *Application Services* Extension Pods, to be created later
-  - The Pods would have a PVC with a request of 100Gi memory requirement
-  - This PV would be Bound with the PVC and allow the Pod(s) to be created successfully
-
-  ```bash
-  helm-capz install pv-arc-eg-chart -n default $baseFolderPath/Helms/pv-chart/ -f $baseFolderPath/Helms/pv-chart/values-eg.yaml
-  helm-capz upgrade pv-arc-eg-chart -n default $baseFolderPath/Helms/pv-chart/ -f $baseFolderPath/Helms/pv-chart/values-eg.yaml
-  
-  # if you want to Uninstall the chart
-  #helm-capz uninstall pv-arc-eg-chart -n defaul
   ```
 
 - **Create** *Event Grid* extension for Azure Arc on K8s
@@ -574,11 +506,19 @@ This is what we would like to achieve in this exercise on the Custom Location cr
   -n $evgExtensionName -g $arcK8sResourceGroup
   ```
 
-  ![eventgrid-4](./Assets/eventgrid-4.png)
-
-  **<u>Pods running *EventGrid namespace*</u>**
+  ![eventgrid-4](./Assets/eventgrid-1.png)
 
   
+
+  ![eventgrid-4](./Assets/eventgrid-2.png)
+
+  
+
+  ![eventgrid-4](./Assets/eventgrid-3.png)
+
+  
+
+  ![eventgrid-4](./Assets/eventgrid-4.png)
 
   
 
