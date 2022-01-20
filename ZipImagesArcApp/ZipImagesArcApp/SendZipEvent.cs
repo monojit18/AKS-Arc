@@ -44,8 +44,8 @@ namespace ZipImagesArcApp
             var zipEventModelString = JsonConvert.SerializeObject(zipEventModel);
             var content = new StringContent(zipEventModelString, Encoding.UTF8,
                                             "application/json");
-            content.Headers.Add("aeg-sas-key", zipEventKey);
-            content.Headers.Add("Content-Type", "application/cloudevents-batch+json");            
+            cl.DefaultRequestHeaders.Add("aeg-sas-key", zipEventKey);            
+            cl.DefaultRequestHeaders.Add("Content-Type", "application/cloudevents-batch+json");            
 
             var response = await cl.PostAsync(zipEventURL, content);
             logger.LogInformation(response.Content.ToString());
