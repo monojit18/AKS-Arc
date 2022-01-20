@@ -26,7 +26,7 @@ namespace ZipImagesArcApp
                 SpecVersion = "1.0",
                 Type = "zipCreated",
                 Source = "arctest/zip",
-                Id = Guid.NewGuid().ToString(),
+                Id = "eventId-n",
                 Time = "2022-01-20T11:13:08+05:30",
                 Subject = "images/zip",
                 DataSchema = "1.0",
@@ -45,7 +45,7 @@ namespace ZipImagesArcApp
             var content = new StringContent(zipEventModelString, Encoding.UTF8,
                                             "application/json");
             cl.DefaultRequestHeaders.Add("aeg-sas-key", zipEventKey);            
-            cl.DefaultRequestHeaders.Add("Content-Type", "application/cloudevents-batch+json");            
+            // cl.DefaultRequestHeaders.Add("Content-Type", "application/cloudevents-batch+json");            
 
             var response = await cl.PostAsync(zipEventURL, content);
             logger.LogInformation(response.Content.ToString());
