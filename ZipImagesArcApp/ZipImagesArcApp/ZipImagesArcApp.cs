@@ -125,13 +125,5 @@ namespace ZipImagesArcApp
             }
 
         }
-    }
-
-    public class ZipModel
-    {
-
-        [JsonProperty("zip")]
-        public string Zip { get; set; }
-
-    }
+    }    
 }
