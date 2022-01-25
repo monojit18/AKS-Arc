@@ -58,16 +58,14 @@ Identify the subtasks of module title.
 
 - #### Introduction - text and/or video
 
-  - Benefits
   - Use Case flow - Zip Images
 
-- #### Extensions 
+- #### Concepts 
 
+  - Benefits
   - Arc enabled K8s
   - App Service Extension
-  - Custom Location
-  - App Service Kube environment
-  - Event Grid Extension
+  
 
 - #### Exercise
 
@@ -76,6 +74,11 @@ Identify the subtasks of module title.
   - Install Extension Components
 
 - #### **Exercise**
+
+#Concnepts
+- Custom Location
+  - App Service Kube environment
+  - Event Grid Extension
 
   - Brief
   - Task 1
@@ -92,7 +95,7 @@ Identify the subtasks of module title.
   - Benefits
   - Use Case flow - TODO App
 
-- #### Components 
+- #### Concepts 
 
   - Arc enabled K8s
   - Arc Data Controller Extension
