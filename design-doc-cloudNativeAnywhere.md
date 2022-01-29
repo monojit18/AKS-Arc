@@ -1,6 +1,4 @@
-# Title
-
-Seamlessly Deploy Cloud Native Apps - using Azure Arc and AKS
+# Module 1: Seamlessly Deploy Azure Cloud Native Apps anywhere using Azure Arc and Kubernetes
 
 ## Role(s)
 
@@ -16,13 +14,14 @@ Seamlessly Deploy Cloud Native Apps - using Azure Arc and AKS
 ## Product(s)
 
 - Azure Arc
-- App Sevice
+- App Service
 - Function
 - Logic App
 - Event Grid
 - SQL MI
 
 ## Prerequisites
+
 - Basic knowledge of the K8s
 - Experience creating and managing resources using the Azure portal at the intermediate level
 - Working knmowledge PaaS + Severless
@@ -42,19 +41,9 @@ After completing this module, you'll be able to: (*REWORD*)
 - Install the Application services extension into an AKS cluster.
 - Deploy Azure App Services web apps to an AKS cluster.
 
-## Chunk your content into subtasks
-
-Identify the subtasks of module title.
-
-| Subtask | What part of the introduction scenario does this subtask satisfy? | How will you assess it: Exercise or Knowledge check? | Which learning objective(s) does this help meet? | Does the subtask have enough learning content to justify an entire unit? If not, which other subtask will you combine it with? |
-| ---- | ---- | ---- | ---- | ---- |
-| TODO | TODO | TODO | TODO | TODO |
-| TODO | TODO | TODO | TODO | TODO |
-| TODO | TODO | TODO | TODO | TODO |
-
 ## Outline the units
 
-### Module 1 - Deploy Azure Cloud Native Services anywhere using Azure Arc for K8s
+### Seamlessly Deploy Azure Cloud Native Apps anywhere using Azure Arc and Kubernetes
 
 - #### Introduction - text and/or video
 
@@ -66,7 +55,6 @@ Identify the subtasks of module title.
   - Arc enabled K8s
   - App Service Extension
   
-
 - #### Exercise
 
   - AKS Cluster
@@ -87,33 +75,3 @@ Identify the subtasks of module title.
 - #### Knowledge check
 
 - #### Summary
-
-### Module 2 - Deploy Azure Data Services anywhere using Azure Arc for K8s
-
-- #### Introduction - text and/or video
-
-  - Benefits
-  - Use Case flow - TODO App
-
-- #### Concepts 
-
-  - Arc enabled K8s
-  - Arc Data Controller Extension
-  - Custom Location
-
-- #### Exercise (*Disclaimer*)
-
-  - AKS Cluster
-    - Onboard the Kubernetes cluster to Arc
-  - Install Extension Components
-
-- #### **Exercise**
-
-  - Brief
-  - Task 1
-  - Task 2
-
-- #### Knowledge check
-
-- #### Summary
-
