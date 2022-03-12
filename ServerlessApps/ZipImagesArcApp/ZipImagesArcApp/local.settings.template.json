@@ -1,0 +1,16 @@
+﻿{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+        "BIG_IMAGE_STORAGE": "",
+        "BIG_IMAGE_BLOB_NAME": "bigimageblob",
+        "ZIP_IMAGE_BLOB_NAME": "zipimageblob",
+        "ZIP_IMAGE_PREFIX": "zip-",
+        "ZIP_WORKFLOW_URL": "",
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+        "ZIP_EVENT_URL": "",
+        "ZIP_EVENT_KEY": ""
+
+    }
+}

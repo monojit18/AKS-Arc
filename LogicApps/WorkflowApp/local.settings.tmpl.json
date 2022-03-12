@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=arcstg;AccountKey=dtWoijV40TN5Lw8ywBmcmtwEh544KLn6gmUvQS9HB/9HMeDhpjt/0n2HNsodLji7OBOMJTqpxmIHepIEkiC+4g==;EndpointSuffix=core.windows.net",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "WORKFLOWS_TENANT_ID": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "WORKFLOWS_SUBSCRIPTION_ID": "6bdcc705-8db6-4029-953a-e749070e6db6",
+    "WORKFLOWS_RESOURCE_GROUP_NAME": "arc-services-rg",
+    "WORKFLOWS_LOCATION_NAME": "eastus",
+    "WORKFLOWS_MANAGEMENT_BASE_URI": "https://management.azure.com/",
+    "WORKFLOWAPP_AAD_CLIENTID": "<WORKFLOWAPP_AAD_CLIENTID>",
+    "WORKFLOWAPP_AAD_TENANTID": "<WORKFLOWAPP_AAD_TENANTID>",
+    "WORKFLOWAPP_AAD_CLIENTSECRET": "<WORKFLOWAPP_AAD_CLIENTSECRET>",
+    "WORKFLOWAPP_AAD_OBJECTID": "<WORKFLOWAPP_AAD_OBJECTID>",  
+    "azurequeues-connectionKey": "<azurequeues-connectionKey>"
+  }
+}

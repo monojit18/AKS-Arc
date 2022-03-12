@@ -1,14 +1,21 @@
 {
-  "serviceProviderConnections": {
-    "AzureBlob": {
-      "parameterValues": {
-        "connectionString": "@appsetting('AzureBlob_connectionString')"
+  "managedApiConnections": {
+    "azurequeues": {
+      "api": {
+        "id": "/subscriptions/6bdcc705-8db6-4029-953a-e749070e6db6/providers/Microsoft.Web/locations/eastus/managedApis/azurequeues"
       },
-      "serviceProvider": {
-        "id": "/serviceProviders/AzureBlob"
+      "connection": {
+        "id": "/subscriptions/6bdcc705-8db6-4029-953a-e749070e6db6/resourceGroups/arc-services-rg/providers/Microsoft.Web/connections/azurequeues"
       },
-      "displayName": "arc-capz-blb-conn"
+      "connectionRuntimeUrl": "https://6eae2e01a63293d7.05.common.logic-eastus.azure-apihub.net/apim/azurequeues/1d7e8f131f734139b0bbfcf5fe8b77e1/",
+      "authentication": {
+        "type": "ActiveDirectoryOAuth",
+        "audience": "https://management.core.windows.net/",
+        "credentialType": "Secret",
+        "clientId": "@appsetting('WORKFLOWAPP_AAD_CLIENTID')",
+        "tenant": "@appsetting('WORKFLOWAPP_AAD_TENANTID')",
+        "secret": "@appsetting('WORKFLOWAPP_AAD_CLIENTSECRET')"
+      }
     }
-  },
-  "managedApiConnections": {}
+  }
 }
