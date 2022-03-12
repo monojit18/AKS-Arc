@@ -6,3 +6,6 @@ Misc
 **/local.settings.json
 **/bin
 **/obj
+.vscode/settings.json
+.vscode/settings.json
+design-doc-dataSvcAnywhere.md
