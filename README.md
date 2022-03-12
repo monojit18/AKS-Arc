@@ -405,10 +405,9 @@ This is in continuation to this [Article] where we had describe the same for dep
       az appservice kube create \
       --resource-group $arcResourceGroupName \
       --name $appsvcKubeEnvironmentName \
-      --custom-location $customLocationId \
-      --static-ip $staticIp
+      --custom-location $customLocationId
       ```
-
+    
 27. **Check** *Kube Environment* creation process
 
     ```bash
