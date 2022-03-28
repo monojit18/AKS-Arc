@@ -1,8 +1,7 @@
 !.gitignore
 !README.md
 Archive
-Misc
-**/misc
+Misc/commands.txt
 **/local.settings.json
 **/bin
 **/obj
