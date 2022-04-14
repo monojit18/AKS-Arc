@@ -3,8 +3,8 @@
 Archive
 Misc/commands.txt
 **/local.settings.json
+**/connections.json
 **/bin
 **/obj
-.vscode/settings.json
-.vscode/settings.json
+**/.vscode
 design-doc-dataSvcAnywhere.md
