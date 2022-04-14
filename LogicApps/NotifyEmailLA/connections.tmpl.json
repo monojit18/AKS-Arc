@@ -1,0 +1,29 @@
+{
+  "serviceProviderConnections": {
+    "AzureBlob": {
+      "parameterValues": {
+        "connectionString": "@appsetting('AzureBlob_connectionString')"
+      },
+      "serviceProvider": {
+        "id": "/serviceProviders/AzureBlob"
+      },
+      "displayName": "arcsvcblob-conn"
+    }
+  },
+  "managedApiConnections": {
+    "outlook": {
+      "api": {
+        "id": ""
+      },
+      "connection": {
+        "id": ""
+      },
+      "connectionRuntimeUrl": "",
+      "authentication": {
+        "type": "Raw",
+        "scheme": "Key",
+        "parameter": "@appsetting('outlook-connectionKey')"
+      }
+    }
+  }
+}

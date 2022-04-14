@@ -1,0 +1,70 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Reads_Blob_Content_from_Azure_Storage": {
+                "type": "ServiceProvider",
+                "inputs": {
+                    "parameters": {
+                        "containerName": "zipimageblob",
+                        "blobName": "@triggerBody()?['Zip']"
+                    },
+                    "serviceProviderConfiguration": {
+                        "connectionName": "AzureBlob",
+                        "operationId": "readBlob",
+                        "serviceProviderId": "/serviceProviders/AzureBlob"
+                    }
+                },
+                "runAfter": {}
+            },
+            "Send_an_email_(V2)": {
+                "type": "ApiConnection",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "referenceName": "outlook"
+                        }
+                    },
+                    "method": "post",
+                    "body": {
+                        "To": "datta.monojit@gmail.com",
+                        "Subject": "Zipped Images",
+                        "Body": "<p>@{triggerBody()?['Zip']}</p>",
+                        "Attachments": [
+                            {
+                                "Name": "@triggerBody()?['Zip']",
+                                "ContentBytes": "@{base64(body('Reads_Blob_Content_from_Azure_Storage')?['content'])}"
+                            }
+                        ]
+                    },
+                    "path": "/v2/Mail"
+                },
+                "runAfter": {
+                    "Reads_Blob_Content_from_Azure_Storage": [
+                        "Succeeded"
+                    ]
+                }
+            }
+        },
+        "triggers": {
+            "manual": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "Zip": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "method": "POST"
+                }
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {}
+    },
+    "kind": "Stateful"
+}

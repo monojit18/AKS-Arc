@@ -1,0 +1,18 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "WORKFLOWS_TENANT_ID": "",
+    "WORKFLOWS_SUBSCRIPTION_ID": "",
+    "WORKFLOWS_RESOURCE_GROUP_NAME": "arc-services-rg",
+    "WORKFLOWS_LOCATION_NAME": "eastus",
+    "WORKFLOWS_MANAGEMENT_BASE_URI": "https://management.azure.com/",
+    "WORKFLOWAPP_AAD_CLIENTID": "",
+    "WORKFLOWAPP_AAD_TENANTID": "",
+    "WORKFLOWAPP_AAD_CLIENTSECRET": "",
+    "WORKFLOWAPP_AAD_OBJECTID": "",
+    "AzureBlob_connectionString": "",
+    "outlook-connectionKey": ""
+  }
+}
