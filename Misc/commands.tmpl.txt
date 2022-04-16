@@ -57,8 +57,8 @@ az ad sp create-for-rbac --skip-assignment --name aks-arc-la-sp
   "tenant": ""
 }
 
-spAppId="c0aeeae8-e61e-443a-80d9-b2e086bbd5d5"
-spPassword="uKD7Q~uBEMY316u~zyyxSqPZH5bD92sa9ERo9"
+spAppId=""
+spPassword=""
 
 az group create -n $arcResourceGroup -l $location
 #az group delete -n $arcResourceGroup --yes
