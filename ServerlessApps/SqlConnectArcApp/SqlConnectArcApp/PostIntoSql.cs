@@ -21,14 +21,14 @@ namespace SqlConnectArcApp
 
         [FunctionName("PostIntoSql")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "student")]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "orders")]
             HttpRequest req, ILogger log)
         {
 
             var messageString = "OK";
             var reader = new StreamReader(req.Body);            
             var body = await reader.ReadToEndAsync();
-            var student = JsonConvert.DeserializeObject<Student>(body);
+            var products = JsonConvert.DeserializeObject<Products>(body);
 
             try
             {
@@ -37,14 +37,15 @@ namespace SqlConnectArcApp
                 {
 
                     await sqlConnection.OpenAsync();
-                    var queryString = $"Insert into Students (Id, Name, Age) Values (@param1, @param2, @param3)";                    
+                    var queryString = $"Insert into Products (ProductID, ProductName, Price, ProductDescription) Values (@param1, @param2, @param3, @param4)";                    
 
                     using (var sqlCommand = new SqlCommand(queryString, sqlConnection))
                     {
 
-                        sqlCommand.Parameters.Add("@param1", SqlDbType.VarChar).Value = student.Id;
-                        sqlCommand.Parameters.Add("@param2", SqlDbType.VarChar).Value = student.Name;
-                        sqlCommand.Parameters.Add("@param3", SqlDbType.Int).Value = student.Age;
+                        sqlCommand.Parameters.Add("@param1", SqlDbType.Int).Value = products.ProductID;
+                        sqlCommand.Parameters.Add("@param2", SqlDbType.VarChar).Value = products.ProductName;
+                        sqlCommand.Parameters.Add("@param3", SqlDbType.Money).Value = products.Price;
+                        sqlCommand.Parameters.Add("@param4", SqlDbType.VarChar).Value = products.ProductDescription;
                         sqlCommand.CommandType = CommandType.Text;
 
                         await sqlCommand.ExecuteNonQueryAsync();

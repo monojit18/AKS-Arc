@@ -19,11 +19,11 @@ namespace SqlConnectArcApp
 
         [FunctionName("GetFromSql")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "student")]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "orders")]
             HttpRequest req, ILogger log)
         {
 
-            var studensList = new List<Student>();
+            var productsList = new List<Products>();
 
             try
             {
@@ -32,7 +32,7 @@ namespace SqlConnectArcApp
                 {
 
                     await sqlConnection.OpenAsync();
-                    var queryString = "Select * from Student";
+                    var queryString = "Select * from Products";
 
                     using (var sqlCommand = new SqlCommand(queryString, sqlConnection))
                     {
@@ -43,15 +43,17 @@ namespace SqlConnectArcApp
                             while (sqlDataReader.Read())
                             {
 
-                                var student = new Student()
+                                var products = new Products()
                                 {
 
-                                    Name = sqlDataReader["Name"].ToString(),
-                                    Age = Int32.Parse(sqlDataReader["Age"].ToString())
+                                    ProductID = Int32.Parse(sqlDataReader["ProductID"].ToString()),
+                                    ProductName = sqlDataReader["ProductName"].ToString(),
+                                    Price = Double.Parse(sqlDataReader["Price"].ToString()),
+                                    ProductDescription = sqlDataReader["ProductDescription"].ToString()
 
                                 };
 
-                                studensList.Add(student);
+                                productsList.Add(products);
 
 
                             }
@@ -68,7 +70,7 @@ namespace SqlConnectArcApp
             }
             
 
-            var responseMessage = JsonConvert.SerializeObject(studensList);
+            var responseMessage = JsonConvert.SerializeObject(productsList);
             log.LogInformation("C# HTTP trigger function processed a request.");
             return new OkObjectResult(responseMessage);
 
