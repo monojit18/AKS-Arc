@@ -45,10 +45,14 @@ Following are the steps we would follow as we move on:
 - [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15)
 - [Visual Studio Code](https://code.visualstudio.com/download)(Optional) or any other preferred IDE
 
-### Let us create the AKS Cluster
+### Prepare Environment
 
-- We can create it using [Portal](https://docs.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-portal) or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-create)
-- We will be taking the CLI approach
+Let us prepare the environment first even before creating the AKS cluster
+
+- Set **CLI** variables
+- Create **Service principals**
+- Create **Virtual Networks**
+- Create **Azure Container Registry**
 
 #### Set CLI Variables
 
@@ -119,3 +123,128 @@ aksSubnetId=$(az network vnet subnet show -n $aksSubnetName --vnet-name $aksVnet
 echo $aksSubnetId
 ```
 
+#### Create Service Principals
+
+> [!NOTE]
+>
+> - This is the legacy approach and should ideally be avoided for the Managed Identity approach, which is recommended
+> - If we go with this approach (*i.e. Service Principal*) then we have to perform role assignment on various resources and we should do it even before creating the cluster
+> - If we go with the Managed Identity approach, then majority of the role assignments are taken care of by AKS cluster creation script. Only thing we need to do additionally is to provide a *Monitoring Metrics Publisher* role to the Managed Identity attached to the AKS cluster. This should be done post the cluster creation
+
+```bash
+az ad sp create-for-rbac --skip-assignment -n arc-aks-sp
+{
+  "appId": "",
+  "displayName": "arc-aks-sp",
+  "name": "",
+  "password": "",
+  "tenant": ""
+}
+```
+
+> [!NOTE]
+>
+> Note down the **appId** and **password** fields which we would be need ing it later. Let us call them as *spAppId*, *spPassword*
+
+```bash
+# Role assignment - Network Contributor to VNET
+az role assignment create --assignee $spAppId --role "Network Contributor" --scope $aksVnetId
+
+# Role assignment - Monitoring Metrics Publisher to the Resource group hosing the Arc-enabled services
+arcResourceGroupId=$(az group show -n $arcResourceGroup --query="id" -o tsv)
+az role assignment create --assignee $spAppId --role "Monitoring Metrics Publisher" --scope $arcResourceGroupId
+echo $arcResourceGroupId
+```
+
+#### Create Azure Container Registry
+
+> [!NOTE]
+>
+> This is needed to store container images of the applications to be deployed onto AKS cluster securely
+
+```bash
+# Create ACR
+az acr create -n $acrName -g $aksResourceGroup --sku STANDARD --admin-enabled false
+acrId=$(az acr show -n $acrName -g $arcsvcResourceGroup --query="id" -o tsv)
+echo $acrId
+
+# Role assignment - AcrPull to ACR
+az role assignment create --assignee $spAppId --role "AcrPull" --scope $acrId
+```
+
+#### Create AKS Cluster
+
+- We can create it using [Portal](https://docs.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-portal) or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-create)
+- We will be taking the CLI approach
+
+```bash
+az aks create --name $clusterName \
+--resource-group $aksResourceGroup \
+--kubernetes-version $version --location $location \
+--vnet-subnet-id "$aksSubnetId" --enable-addons $addons \
+--node-vm-size $sysNodeSize \
+--node-count $sysNodeCount --max-pods $maxSysPods \
+--service-principal $spAppId \
+--client-secret $spPassword \
+--network-plugin $networkPlugin --network-policy $networkPolicy \
+--nodepool-name $sysNodePoolName --vm-set-type $vmSetType \
+--generate-ssh-keys \
+--disable-rbac \
+--attach-acr $acrName
+```
+
+#### Connect to the AKS cluster
+
+```bash
+az aks get-credentials -g $aksResourceGroup --name $clusterName --admin --overwrite
+```
+
+> [!TIP]
+>
+> - This command also configures the .kubeconfig on local machine
+> - All subsequent commands for Azure Arc will take effect on this K8s cluster only
+
+So we have now created a basic AKS cluster which will be hosting our Applications (*Azure Function* and *Logic App*) and SQL MI Database instance and help us to build an end-to-end use case
+
+### On-board AKS cluster on Azure Arc
+
+```bash
+# Add Azure Arc extension for Azure CLI
+az extension add --name connectedk8s
+
+# Register following providers
+az provider register --namespace Microsoft.Kubernetes
+az provider register --namespace Microsoft.KubernetesConfiguration
+az provider register --namespace Microsoft.ExtendedLocation
+```
+
+```bash
+# on-board AKS cluster onto Azure Arc
+az connectedk8s connect -g $arcResourceGroup -n $connectedClusterName
+```
+
+> [!TIP]
+>
+> - This takes sometime to complete
+> - The progress status can be checked in the Portal or from the Azure CLI
+
+```bash
+# Show the progress
+az connectedk8s show -g $arcResourceGroup -n $connectedClusterName
+```
+
+> [!TIP]
+>
+> Wait till status is *Connected* - this is when AKS cluster in fully on-boarded onto Azure Arc
+
+The next task will be to Deploy the Data Controller Extension onto Azure Arc-enabled AKS cluster
+
+### Deploy Data Controller Extension
+
+![arc-aks-extension](./Assets/arc-aks-extension.png)
+
+Select Add and follow the on-screen instructions. Following set of diagrams would show how the creation process works and finally deploys a Data controller extension onto Azure Arc-enabled AKS cluster
+
+![arc-aks-dc-menu](./Assets/arc-aks-dc-menu.png)
+
+![arc-aks-dc-menu-2](./Assets/arc-aks-dc-menu-2.png)
