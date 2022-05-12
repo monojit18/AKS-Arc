@@ -14,7 +14,24 @@ Following are the components to be deployed:
 - **A Logic App** - This implements the notification flow by sending emails to intended recipients and is triggered by the Function App
 - **An SQL MI** - This holds the business data needed for the entire flow and can be accessed only from the above applications running within the cluster
 
-All the above components will be running privately within the AKS cluster and is exposed only through an Ingress Controller. This article would deploy this Ingress Controller as a Public Load Balancer for simplicity; but a more stringent and recommended approach would be make this Ingress Controller as an Internal Load Balancer with private IP and expose it only through an Application Gateway or API Management resource, thus making the InBound access more secure.
+All the above components will be running Privately within the AKS cluster and is exposed only through an Ingress Controller. This article would deploy this Ingress Controller as a *Public Load Balancer* for simplicity; but a more stringent and recommended approach would be make this Ingress Controller as an *Internal Load Balancer* with private IP and expose it only through an Application Gateway or API Management resource, thus making the InBound access more secure.
+
+## Let us delve into this...
+
+Following are the steps we would follow as we move on:
+
+- Create a basic AKS Cluster. For simplicity, we would not add any additional security or features in this cluster
+- On-board the cluster onto Azure Arc
+- Deploy Data Controller extension for Arc
+- Deploy SQL MI on Azure Arc
+  - Connect and review the deployments
+- Deploy an Azure Function App as Container onto the AKS cluster
+- Deploy Logic App as container onto the AKS cluster
+- Deploy an Ingress Controller - we would be using Nginx here and configure it as a Public Load Balancer
+- Deploy Ingress routing within the cluster
+  - Application Ingress
+  - Data Monitor Ingress
+- Test the Application flow end-to-end
 
 
 
