@@ -1,6 +1,7 @@
 !.gitignore
 !README.md
 Archive
+Certs
 Misc/commands.txt
 **/local.settings.json
 **/connections.json
