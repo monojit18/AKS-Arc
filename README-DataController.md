@@ -42,8 +42,9 @@ Following are the steps we would follow as we move on:
 - A Github account (optional)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-- [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15)
-- [Visual Studio Code](https://code.visualstudio.com/download)(Optional) or any other preferred IDE
+- [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15) (*Optional*)
+  - Although optional, this is an important tool connect with SQL MI on cluster and then manage the databases
+- [Visual Studio Code](https://code.visualstudio.com/download) (*Optional*) or any other preferred IDE
 
 ### Prepare Environment
 
@@ -265,6 +266,21 @@ Provide a Name to the **Custom Location**
 
 ![arc-aks-dc-create-3](./Assets/arc-aks-dc-create-3.png)
 
+#### Service Type
+
+- **Load Balancer** - deploy data controller and monitoring services as Load Balancer with Public IP
+- **NodePort** - deploy data controller and monitoring services as NodePort IP
+
+> [!NOTE]
+>
+> - Creating it as a **Load Balancer** would allow us to access the Monitoring services - **Grafana** and **Kibana** publicly - browser or through tools like Azure Data Studio
+>
+> - Creating it as **NodePort** will make the access restrictive and prevent us from accessing it Publicly.
+>
+>   We then have to depend on *kubectl* commands or bringing in an **Ingress Controller** in front of these services and allow access.
+>
+>   In this article, we will follow the 2nd approach and make the entire Inbound flow secured
+
 ![arc-aks-dc-create-4](./Assets/arc-aks-dc-create-4.png)
 
 ![arc-aks-dc-create-5](./Assets/arc-aks-dc-create-5.png)
@@ -289,6 +305,23 @@ As we have done for Data Controller extension, we will do the SQL MI deployment 
 
 ![arc-aks-dc-sqlmi-1](./Assets/arc-aks-dc-sqlmi-1.png)
 
+
+
+#### Service Type
+
+- **Load Balancer** - deploy SQL MI service as Load Balancer with Public IP
+- **NodePort** - deploy SQL MI service  as NodePort IP
+
+> [!NOTE]
+>
+> - Creating it as a Load Balancer would allow us to access the SQL MI service publicly - through browser or through tools like Azure Data Studio
+>
+> - Creating it as NodePort will make the access restrictive and prevent us from accessing it Publicly.
+>
+>   We then have to depend on *kubectl* commands or bringing in an Ingress Controller in front of these services and allow access.
+>
+>   In this article, we will follow the 2nd approach and make the entire Inbound flow secured
+
 ![arc-aks-dc-sqlmi-2](./Assets/arc-aks-dc-sqlmi-2.png)
 
 ![arc-aks-dc-sqlmi-3](./Assets/arc-aks-dc-sqlmi-3.png)
@@ -312,3 +345,6 @@ kubectl get pods -n arcaksdccloc -w
 ![arc-aks-dc-sqlmi-deploy-2](./Assets/arc-aks-dc-sqlmi-deploy-2.png)
 
 At this stage, SQL MI is deployed onto AKS cluster through Arc-enabled Data Controller and we are all set to move ahead with this 
+
+### Connect through Data Studio
+
