@@ -344,7 +344,24 @@ kubectl get pods -n arcaksdccloc -w
 
 ![arc-aks-dc-sqlmi-deploy-2](./Assets/arc-aks-dc-sqlmi-deploy-2.png)
 
-At this stage, SQL MI is deployed onto AKS cluster through Arc-enabled Data Controller and we are all set to move ahead with this 
+At this stage, SQL MI is deployed onto AKS cluster through Arc-enabled Data Controller and we are all set to move ahead with this.
+
+As we can see that there are multiple services which are exposed with a Public IP and can be accessed from anywhere:
+
+- **aksarcsqlmi-external-svc** - SQL MI service
+- **controller-external-svc** - Controller service
+- **logsui-external-svc** - Kibana dashboard service
+- **metricsui-external-svc** - Grafana dashboard service
+
+#### Service Type
+
+##### Load Balancer
+
+![arc-aks-svc-public-1](./Assets/arc-aks-svc-public-1.png)
+
+##### NodePort
+
+![arc-aks-svc-nodeport-1](./Assets/arc-aks-svc-nodeport-1.png)
 
 ### Connect through Data Studio
 
