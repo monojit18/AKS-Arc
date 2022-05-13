@@ -253,6 +253,12 @@ Select **Create** and fill up all the details to complete the create the Data Co
 
 ![arc-aks-dc-create-1](./Assets/arc-aks-dc-create-1.png)
 
+Provide a Name to the **Custom Location**
+
+> [!NOTE]
+>
+> Azure Arc will create a namespace on AKS cluster with this which can be used to track the progress of subsequent deployments
+
 ![arc-aks-dc-create-2](./Assets/arc-aks-dc-create-2.png)
 
 ![arc-aks-dc-create-3-1](./Assets/arc-aks-dc-create-3-1.png)
@@ -264,6 +270,10 @@ Select **Create** and fill up all the details to complete the create the Data Co
 ![arc-aks-dc-create-5](./Assets/arc-aks-dc-create-5.png)
 
 Select **Create** and look at he CLI to see the progress
+
+```bash
+kubectl get datacontrollers -A -w
+```
 
 ![arc-aks-dc-deploy-state-change](./Assets/arc-aks-dc-deploy-state-change.png)
 
@@ -285,8 +295,20 @@ As we have done for Data Controller extension, we will do the SQL MI deployment 
 
 Select **Create** and deploy SQL MI containers onto the AKS cluster. Check the status of the progress in the Azure CLI
 
+```bash
+kubectl get pods -n arcaksdccloc -w
+```
+
+> [!NOTE]
+>
+> **arcaksdccloc** is the name of the **Custom Location** chosen earlier. It can be any name of our choice; change the command accordingly
+>
+> kubectl get pods -n **<Custom Location Name>** -w
+
 ![arc-aks-dc-deploy](./Assets/arc-aks-dc-deploy.png)
 
 ![arc-aks-dc-sqlmi-deploy](./Assets/arc-aks-dc-sqlmi-deploy.png)
 
 ![arc-aks-dc-sqlmi-deploy-2](./Assets/arc-aks-dc-sqlmi-deploy-2.png)
+
+At this stage, SQL MI is deployed onto AKS cluster through Arc-enabled Data Controller and we are all set to move ahead with this 
