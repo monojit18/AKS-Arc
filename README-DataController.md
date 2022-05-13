@@ -247,4 +247,46 @@ Select Add and follow the on-screen instructions. Following set of diagrams woul
 
 ![arc-aks-dc-menu](./Assets/arc-aks-dc-menu.png)
 
-![arc-aks-dc-menu-2](./Assets/arc-aks-dc-menu-2.png)
+
+
+Select **Create** and fill up all the details to complete the create the Data Controller extension
+
+![arc-aks-dc-create-1](./Assets/arc-aks-dc-create-1.png)
+
+![arc-aks-dc-create-2](./Assets/arc-aks-dc-create-2.png)
+
+![arc-aks-dc-create-3-1](./Assets/arc-aks-dc-create-3-1.png)
+
+![arc-aks-dc-create-3](./Assets/arc-aks-dc-create-3.png)
+
+![arc-aks-dc-create-4](./Assets/arc-aks-dc-create-4.png)
+
+![arc-aks-dc-create-5](./Assets/arc-aks-dc-create-5.png)
+
+Select **Create** and look at he CLI to see the progress
+
+![arc-aks-dc-deploy-state-change](./Assets/arc-aks-dc-deploy-state-change.png)
+
+![arc-aks-dc-deploy-state-change-2](./Assets/arc-aks-dc-deploy-state-change-2.png)
+
+Wait for the status to **Ready**. At this stage entire Data Controller setup is complete and we are ready to move further
+
+### Deploy SQL Managed Instances
+
+Since now our Data Controller extension is ready on Azure Arc-enabled Kubernetes; we will now go-ahead and deploy SQL Managed Instance onto this.
+
+As we have done for Data Controller extension, we will do the SQL MI deployment through portal and check the status in Azure CLI. Following figures should explain the steps
+
+![arc-aks-dc-sqlmi-1](./Assets/arc-aks-dc-sqlmi-1.png)
+
+![arc-aks-dc-sqlmi-2](./Assets/arc-aks-dc-sqlmi-2.png)
+
+![arc-aks-dc-sqlmi-3](./Assets/arc-aks-dc-sqlmi-3.png)
+
+Select **Create** and deploy SQL MI containers onto the AKS cluster. Check the status of the progress in the Azure CLI
+
+![arc-aks-dc-deploy](./Assets/arc-aks-dc-deploy.png)
+
+![arc-aks-dc-sqlmi-deploy](./Assets/arc-aks-dc-sqlmi-deploy.png)
+
+![arc-aks-dc-sqlmi-deploy-2](./Assets/arc-aks-dc-sqlmi-deploy-2.png)
