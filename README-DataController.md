@@ -44,6 +44,7 @@ Following are the steps we would follow as we move on:
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 - [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15) (*Optional*)
   - Although optional, this is an important tool connect with SQL MI on cluster and then manage the databases
+  - Follow these [Instructions](https://docs.microsoft.com/en-us/azure/azure-arc/data/install-client-tools) to install all necessary components
 - [Visual Studio Code](https://code.visualstudio.com/download) (*Optional*) or any other preferred IDE
 
 ### Prepare Environment
@@ -348,10 +349,10 @@ At this stage, SQL MI is deployed onto AKS cluster through Arc-enabled Data Cont
 
 As we can see that there are multiple services which are exposed with a Public IP and can be accessed from anywhere:
 
-- **aksarcsqlmi-external-svc** - SQL MI service
-- **controller-external-svc** - Controller service
-- **logsui-external-svc** - Kibana dashboard service
-- **metricsui-external-svc** - Grafana dashboard service
+- aksarcsqlmi-external-svc - **SQL MI** service (Port **1433**)
+- controller-external-svc - **Data Controller** service
+- logsui-external-svc - **Kibana dashboard** service (Port **5601**)
+- metricsui-external-svc - **Grafana dashboard** service (Port **3000**)
 
 #### Service Type
 
@@ -364,4 +365,18 @@ As we can see that there are multiple services which are exposed with a Public I
 ![arc-aks-svc-nodeport-1](./Assets/arc-aks-svc-nodeport-1.png)
 
 ### Connect through Data Studio
+
+Let us now try to connect the SQL MI database through Azure Data Studio and view/manage its contents.
+
+#### Service Type
+
+##### Load Balancer
+
+Since it exposes a public IP, we can connect to the directly and view/manage its contents
+
+![arc-aks-datastudio-overview](./Assets/arc-aks-datastudio-overview.png)
+
+![arc-aks-datastudio-overview-2](./Assets/arc-aks-datastudio-overview-2.png)
+
+##### NodePort
 
