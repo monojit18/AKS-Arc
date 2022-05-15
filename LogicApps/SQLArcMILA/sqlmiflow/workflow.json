@@ -1,0 +1,54 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_an_email_(V2)": {
+                "type": "ApiConnection",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "referenceName": "outlook"
+                        }
+                    },
+                    "method": "post",
+                    "body": {
+                        "To": "datta.monojit@gmail.com; monojit.datta@yahoo.in",
+                        "Subject": "URGENT: Product @{triggerBody()?['id']} will be returned!",
+                        "Body": "<p>Dear Sir/Madam,<br>\n<br>\nThis is to inform you that the your Order for @{triggerBody()?['quantity']} &nbsp;items of &nbsp;@{triggerBody()?['name']} with Id @{triggerBody()?['id']} has been rejected due to the following reason: @{triggerBody()?['reason']}.<br>\n<br>\nWe hope to work with you in near future.<br>\nThanks.<br>\n</p>"
+                    },
+                    "path": "/v2/Mail"
+                },
+                "runAfter": {}
+            }
+        },
+        "triggers": {
+            "manual": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "quantity": {
+                                "type": "number"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "method": "POST"
+                }
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {}
+    },
+    "kind": "Stateful"
+}

@@ -7,7 +7,7 @@ namespace SqlConnectArcApp
     {
 
         [JsonProperty("id")]
-        public int ProductID { get; set; }
+        public string ProductID { get; set; }
 
         [JsonProperty("name")]
         public string ProductName { get; set; }
@@ -17,6 +17,9 @@ namespace SqlConnectArcApp
 
         [JsonProperty("desc")]
         public string ProductDescription { get; set; }
+
+        [JsonProperty("quantity")]
+        public float Quantity { get; set; }
 
     }
 }

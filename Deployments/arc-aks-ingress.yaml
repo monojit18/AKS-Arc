@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: arc-aks-ingress
+  namespace: aksarcdccloc
+  annotations:
+    kubernetes.io/ingress.class: nginx    
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  tls:
+  - hosts:
+    - "*.wkshpdev.com"
+    secretName: dc-arc-tls-secret
+  rules:
+  - host: grafanaarc.wkshpdev.com
+    http:
+      paths:
+      - path: /?(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: metricsui-external-svc
+            port:
+              number: 3000
+  - host: kibanaarc.wkshpdev.com
+    http:
+      paths:
+      - path: /?(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: logsui-external-svc
+            port:
+              number: 5601

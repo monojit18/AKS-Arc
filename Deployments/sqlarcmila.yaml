@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:  
+  labels:
+    app: sqlarcmila-deploy
+  name: sqlarcmila-deploy
+  namespace: apis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sqlarcmila-pod  
+  template:
+    metadata:      
+      labels:
+        app: sqlarcmila-pod
+    spec:
+      containers:
+      - image: aksk8sacr.azurecr.io/sqlarcmila:v1.0.2
+        name: sqlarcmila
+        resources:
+          requests:
+            cpu: "0.25"
+            memory: 125Mi
+          limits:
+            cpu: "0.5"
+            memory: 250Mi
+        envFrom:
+        - secretRef:
+            name: sqlarcmilasecret
+        volumeMounts:
+        - name: arcaks-secret-volume
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+      nodeSelector:
+        agentpool: apinodepool
+      volumes:
+      - name: arcaks-secret-volume
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: arcaks-secret-provider
+          nodePublishSecretRef:
+            name: secrets-store-creds
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlarcmila-svc
+  namespace: apis
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: sqlarcmila-pod
+  type: ClusterIP

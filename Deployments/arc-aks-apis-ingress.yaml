@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: arc-aks-apis-ingress
+  namespace: apis
+  annotations:
+    kubernetes.io/ingress.class: nginx    
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  tls:
+  - hosts:
+    - "*.wkshpdev.com"
+    secretName: api-arc-tls-secret
+  rules:
+  - host: apiarc.wkshpdev.com
+    http:
+      paths:
+      - path: /sql/?(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: sqlconnectarcapp-svc
+            port:
+              number: 80
