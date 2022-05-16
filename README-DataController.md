@@ -306,8 +306,6 @@ As we have done for Data Controller extension, we will do the SQL MI deployment 
 
 ![arc-aks-dc-sqlmi-1](./Assets/arc-aks-dc-sqlmi-1.png)
 
-
-
 #### Service Type
 
 - **Load Balancer** - deploy SQL MI service as Load Balancer with Public IP
@@ -372,11 +370,22 @@ Let us now try to connect the SQL MI database through Azure Data Studio and view
 
 ##### Load Balancer
 
-Since it exposes a public IP, we can connect to the directly and view/manage its contents
+Since the Data Controller is exposed as a Load Balancer service with a public IP, we can connect to the directly and view/manage its contents.
+
+##### Tables
 
 ![arc-aks-datastudio-overview](./Assets/arc-aks-datastudio-overview.png)
+
+##### Monitoring
 
 ![arc-aks-datastudio-overview-2](./Assets/arc-aks-datastudio-overview-2.png)
 
 ##### NodePort
 
+Since the Data Controller is exposed as a NodePort service, so we can not connect to the Database from Data Studio; but we can see the metadata information for the same.
+
+- External endpoint to access the server is private; hence **Connect to Server** from *Data Studio* would fail. We will reach out to the database from within the cluster later
+- **Kibana** and **Grafana** endpoints will be accessed from within the cluster through a Load Balancer service
+- *We will come back to this again once we complete the deployment of the application stack*
+
+![arc-aks-datastudio-nodeport](./Assets/arc-aks-datastudio-nodeport.png)
