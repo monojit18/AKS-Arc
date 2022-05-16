@@ -479,7 +479,7 @@ GO
   az acr build -t <acrName>.azurecr.io/sqlconenctarcapp:v1.0.0 -r <acrName> .
   ```
 
-#### Configure AKS cluster
+#### Deploy Applications onto AKS cluster
 
 We will now configure the AKS cluster and deploy few additional resources to make the deployment work seamlessly for both Function App and Logic App and thus for the entire end-to-end flow
 
@@ -501,15 +501,57 @@ kubectl create secret generic secrets-store-creds --from-literal clientid=$spApp
 kubectl label secret secrets-store-creds secrets-store.csi.k8s.io/used=true -n apis
 
 # Deploy CSI driver for KeyVault
-kubectl apply -f secret-provider.yaml
+kubectl apply -f ./secret-provider.yaml
 
 # Deploy Logic App - SQLArcMILA
-kubectl apply -f sqlarcmila.yaml
+kubectl apply -f ./sqlarcmila.yaml
 
 # Deploy Azure Function App - SQLConnectArcApp
-kubectl apply -f sqlconnectarcapp.yaml
+kubectl apply -f ./sqlconnectarcapp.yaml
 ```
 
+> [!NOTE]
+>
+> Although we have deployed all applications and services onto the AKS cluster, the major services for Data Controller extension are all **NodePort** and services for the applications are all **Cluster IP**; hence we would need an **Ingress Controller** which will be public facing Load Balancer and with a **Public IP**. This Ingress Controller along with **K8s Ingress** routing will send traffic to appropriate backend services - for *Application services* as well as for *Data Controller extension services*
 
+#### Deploy Nginx Ingress Controller
 
-#### 
+```bash
+# Install Nginx Ingress Controller
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+kubectl create ns arc-nginx-ingess-ns
+helm install arc-nginx-ingess ingress-nginx/ingress-nginx --namespace arc-nginx-ingess-ns \
+--set controller.replicaCount=2 \
+--set controller.nodeSelector.agentpool=arcsyspool \
+--set controller.defaultBackend.nodeSelector.agentpool=arcsyspool
+
+# Post Installation - check the Public IP
+kubectl get svc -n arc-nginx-ingess-ns -w
+```
+
+> [!TIP]
+>
+> - Note down the **Public IP** as we will need this later
+> - This can be added as an **A-record** in DNS server to make it better accessible
+
+#### Deploy K8s Ingress
+
+We will need two Ingress objects - one for Application services and one for Data Controller Extension services as they are deployed onto two different namespaces
+
+> [!NOTE]
+>
+> - Replace <dns-name>
+
+```bash
+# Go to Deployment folder
+cd Deployments
+
+# Deploy Ingress object for Data Controller Extension services 
+kubectl apply -f ./arc-aks-ingress.yaml
+
+# Deploy Ingress object for Application services 
+kubectl apply -f ./arc-aks-apis-ingress.yaml
+```
+
