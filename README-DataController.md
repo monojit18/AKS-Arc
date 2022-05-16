@@ -55,6 +55,7 @@ Let us prepare the environment first even before creating the AKS cluster
 - Create **Service principals**
 - Create **Virtual Networks**
 - Create **Azure Container Registry**
+- Create **Azure KeyVault**
 
 #### Set CLI Variables
 
@@ -173,6 +174,14 @@ echo $acrId
 # Role assignment - AcrPull to ACR
 az role assignment create --assignee $spAppId --role "AcrPull" --scope $acrId
 ```
+
+#### Create Azure KeyVault
+
+> [!NOTE]
+>
+> We will store all application specific secrets into this KeyVault and configure both Function App and Logic App to read from it
+
+Create KeyVault from [Portal](https://docs.microsoft.com/en-us/azure/key-vault/general/quick-create-portal) or [Azure CLI](https://docs.microsoft.com/en-us/azure/key-vault/general/quick-create-cli)
 
 #### Create AKS Cluster
 
@@ -414,19 +423,84 @@ kubectl get po -n aksarcdccloc
 ```bash
 # Connect to the controldb-0 pod
 kubectl exec -it controldb-0 -n aksarcdccloc -c mssql-server -- bash
+```
 
+Run following set of commands to setup the Database (**Orders**) and the corresponding Tables (**Products**, **Returns**)
+
+```sql
 # Connect to the sql server
 # Server or Host name - arcsqlmi-external-svc.<namespace>.svc, <port number>
 # UserName - that we had provided while creating the SQL Mi instance throigh portal
 # password - that we had provided while creating the SQL Mi instance throigh portal
 ./opt/mssql-tools/bin/sqlcmd -S arcsqlmi-external-svc.aksarcdccloc.svc,1433 -U <UserName> -P <Password>
+
+CREATE DATABASE Orders
+GO
+
+CREATE TABLE dbo.Products (ProductID nvarchar(50) PRIMARY KEY NOT NULL, ProductName varchar(25) NOT NULL, Price money NULL, Quantity float, ProductDescription varchar(max) NULL)
+GO
+
+CREATE TABLE dbo.Returns (ProductID nvarchar(50) PRIMARY KEY NOT NULL, ProductName varchar(25) NOT NULL, Quantity float, Reason varchar(max) NULL)
+GO
+```
+
+![arc-aks-sqlmi-products](./Assets/arc-aks-sqlmi-products.png)
+
+![arc-aks-sqlmi-returns](./Assets/arc-aks-sqlmi-returns.png)
+
+### Applications
+
+We will now configure the AKS cluster and deploy few additional resources to make the deployment work seamlessly for both Function App and Logic App and thus for the entire end-to-end flow
+
+#### Configure AKS cluster
+
+```bash
+# Create a namespace for APIs - this will host both Function App and Logic App
+kubectl create ns apis
+
+# Go to Deployment folder
+cd Deployments
+
+# Deploy CSI driver for KeyVault
+kubectl apply -f secret-provider.yaml
+
+
+
 ```
 
 
 
-### Applications
-
 #### SqlConnectArcApp
 
 - An Azure Function App which is http triggered and accepts an Order for a Product
-- If the requested quantity of the Order is more than an upper bound, say, 100 it Rejects the Order and send thsi to th
+- If the requested quantity of the **Orders** is *more than an upper bound*, say, 100 it Rejects the Order and send this to the **Returns** Table
+- Similarly, if the requested quantity of the Order is *less than an lower bound*, say, 10 it Rejects the Order and send this to the **Returns** Table
+- Everything else goes to **Products** Table
+- Finally the Rejection information is sent, with the reason for rejection, through a Logic App that sends an email to to the intended recipients
+
+##### Deploy Function App
+
+- Clone the repo
+
+- Open **local.settings.tmpl.json**
+
+  - Rename the file to **local.settings.json**
+  - **SQLConnectionString** - Replace **UserName** and **Password** with appropriate values as set before
+  - **LOGICAPP_CALLBACK_URL** - Replace **Code** by the mastery from Azure Storage as explained in the Logic App deployment section
+  - **LOGICAPP_POST_URL** - Nothing to be changed here; this will be set appropriately by the function app itself
+
+- Build the Function App and Push to Azure Container Registry
+
+  ```bash
+  az acr build -t <acrName>.azurecr.io/sqlconenctarcapp:v1.0.0 -r <acrName> .
+  ```
+
+- Deploy Function App image onto AKS cluster
+
+  
+
+  ```
+  
+  ```
+
+  
