@@ -389,3 +389,44 @@ Since the Data Controller is exposed as a NodePort service, so we can not connec
 - *We will come back to this again once we complete the deployment of the application stack*
 
 ![arc-aks-datastudio-nodeport](./Assets/arc-aks-datastudio-nodeport.png)
+
+### Connect through Azure CLI
+
+#### Connect to Data Controller Pod
+
+```bash
+# aksarcdccloc is the namespace where all data controller resources have been deployed
+kubectl get po -n aksarcdccloc
+```
+
+- **controldb-0** - Data Controller Pod
+- **arcsqlmi-0** - SQL MI Pod
+
+![arc-aks-dc-pods](./Assets/arc-aks-dc-pods.png)
+
+- **arcsqlmi-external-svc** - SQL Server service
+- **controller-external-svc** - Controller service
+- **logsui-external-svc** - Kibana service
+- **metricsui-external-svc** - Grafana service
+
+![arc-aks-svc-nodeport-1](./Assets/arc-aks-svc-nodeport-1.png)
+
+```bash
+# Connect to the controldb-0 pod
+kubectl exec -it controldb-0 -n aksarcdccloc -c mssql-server -- bash
+
+# Connect to the sql server
+# Server or Host name - arcsqlmi-external-svc.<namespace>.svc, <port number>
+# UserName - that we had provided while creating the SQL Mi instance throigh portal
+# password - that we had provided while creating the SQL Mi instance throigh portal
+./opt/mssql-tools/bin/sqlcmd -S arcsqlmi-external-svc.aksarcdccloc.svc,1433 -U <UserName> -P <Password>
+```
+
+
+
+### Applications
+
+#### SqlConnectArcApp
+
+- An Azure Function App which is http triggered and accepts an Order for a Product
+- If the requested quantity of the Order is more than an upper bound, say, 100 it Rejects the Order and send thsi to th
