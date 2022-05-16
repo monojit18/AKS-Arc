@@ -4,7 +4,9 @@
 
 Azure Arc provides a simplified *Governance* and *Management* capability by delivering a consistent multi-cloud and on-premises management platform. Azure Arc-enabled Kubernetes allows us to on-board and manage Kubernetes clusters running anywhere -  clusters running on other public cloud providers (*GCP* or *AWS*) or clusters running on on-premise data-centers (*VMware vSphere* or *Azure Stack HCI*) to Azure Arc. Azure Arc-enabled data services allows us to run Azure data services like *SQL Managed Instance* or *PostgreSQL Hyperscale (preview)* anywhere using Kubernetes.
 
-## What this Article does?
+## What are we going to build?
+
+![arc-aks-use-case](./Assets/arc-aks-use-case.png)
 
 In this article we will build an end-to-end flow of a connected set of simple micro-services and an SQL Managed Instance all deployed on an AKS cluster. The same example can be extended to deploy all the components onto any other cluster of choice - GKE, EKS or even on any un-managed cluster.
 
@@ -609,6 +611,6 @@ curl https://<dns-name>/sql/api/orders/returns
 
 ### Conclusion
 
-This end to end application flow depicts how two event driven applications - an Azure function app and a Logic App - can talk to each other seamlessly, **run anywhere** and can **maintain state anywhere** - using SQL Managed Instance as Containers and leveraging *Azure Arc-enabled k8s* and *Azure Arc-enabled Data Services*. This represents a cost effective, flexible, resilient way of running Cloud Native Apps on variety platforms - On-Premise, Edge or Cloud
+This end to end application flow depicts how multiple event driven applications - two n this case, an Azure function app and a Logic App - can talk to each other seamlessly, **run anywhere** and can **maintain state anywhere** - using SQL Managed Instance as Containers and leveraging *Azure Arc-enabled k8s* and *Azure Arc-enabled Data Services*. This represents a cost effective, flexible, resilient way of running Cloud Native Apps on variety platforms - On-Premise, Edge or Cloud
 
 ## References
