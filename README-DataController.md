@@ -450,25 +450,9 @@ GO
 
 ### Applications
 
-We will now configure the AKS cluster and deploy few additional resources to make the deployment work seamlessly for both Function App and Logic App and thus for the entire end-to-end flow
+#### SQLArcMILA
 
-#### Configure AKS cluster
-
-```bash
-# Create a namespace for APIs - this will host both Function App and Logic App
-kubectl create ns apis
-
-# Go to Deployment folder
-cd Deployments
-
-# Deploy CSI driver for KeyVault
-kubectl apply -f secret-provider.yaml
-
-
-
-```
-
-
+- A 
 
 #### SqlConnectArcApp
 
@@ -495,12 +479,26 @@ kubectl apply -f secret-provider.yaml
   az acr build -t <acrName>.azurecr.io/sqlconenctarcapp:v1.0.0 -r <acrName> .
   ```
 
-- Deploy Function App image onto AKS cluster
 
-  
 
-  ```
-  
-  ```
+#### Configure AKS cluster
 
-  
+We will now configure the AKS cluster and deploy few additional resources to make the deployment work seamlessly for both Function App and Logic App and thus for the entire end-to-end flow
+
+```bash
+# Create a namespace for APIs - this will host both Function App and Logic App
+kubectl create ns apis
+
+# Go to Deployment folder
+cd Deployments
+
+# Deploy CSI driver for KeyVault
+kubectl apply -f secret-provider.yaml
+
+
+
+```
+
+
+
+#### 
