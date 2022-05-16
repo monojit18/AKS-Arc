@@ -479,11 +479,15 @@ GO
   az acr build -t <acrName>.azurecr.io/sqlconenctarcapp:v1.0.0 -r <acrName> .
   ```
 
-
-
 #### Configure AKS cluster
 
 We will now configure the AKS cluster and deploy few additional resources to make the deployment work seamlessly for both Function App and Logic App and thus for the entire end-to-end flow
+
+> [!TIP]
+>
+> - We will need the Service Principal created earlier while creating AKS cluster viz. **$spAppId**, **$spPassword** and keep them handy. We will need this in the following steps here
+> - Provide Get and List access to they Service Principal for the **Keys**, **Secrets** and **Certificates**
+> - CSI driver will use this Service Principal to access KeyVault and fetch the secret values
 
 ```bash
 # Create a namespace for APIs - this will host both Function App and Logic App
@@ -492,11 +496,18 @@ kubectl create ns apis
 # Go to Deployment folder
 cd Deployments
 
+# Create Secret to store the Servive principal with thin the AKS cluster; to be used by CSI KeyVault provider
+kubectl create secret generic secrets-store-creds --from-literal clientid=$spAppId --from-literal clientsecret=$spPassword -n apis
+kubectl label secret secrets-store-creds secrets-store.csi.k8s.io/used=true -n apis
+
 # Deploy CSI driver for KeyVault
 kubectl apply -f secret-provider.yaml
 
+# Deploy Logic App - SQLArcMILA
+kubectl apply -f sqlarcmila.yaml
 
-
+# Deploy Azure Function App - SQLConnectArcApp
+kubectl apply -f sqlconnectarcapp.yaml
 ```
 
 
