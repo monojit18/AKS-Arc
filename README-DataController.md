@@ -342,9 +342,7 @@ kubectl get pods -n arcaksdccloc -w
 
 > [!NOTE]
 >
-> **arcaksdccloc** is the name of the **Custom Location** chosen earlier. It can be any name of our choice; change the command accordingly
->
-> kubectl get pods -n **<Custom Location Name>** -w
+> **arcaksdccloc** is the name of the **Custom Location** chosen earlier. It can be any name of our choice; change the command accordingly - *kubectl get pods -n **<Custom Location Name>** -w*
 
 ![arc-aks-dc-deploy](./Assets/arc-aks-dc-deploy.png)
 
@@ -542,7 +540,13 @@ We will need two Ingress objects - one for Application services and one for Data
 
 > [!NOTE]
 >
-> - Replace <dns-name>
+> - Ingress can be configured to support TLS by passing the Certificate information of the DNS server
+> - Ingress can be configured to support **SSL Offloading** at the Ingress Or sending to the backend as **Https**
+
+> [!TIP]
+>
+> - Replace <dns-name> by the name of the DNS server
+> - Create a k8s **Secret** of type **tls** within AKS cluster with the certificate information of the DNS server. The PEM certificate file as **--cert** and the Private key of the certificate as **--key** to be passed while creating the k8s Secret
 
 ```bash
 # Go to Deployment folder
