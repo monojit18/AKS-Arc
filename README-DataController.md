@@ -559,3 +559,56 @@ kubectl apply -f ./arc-aks-ingress.yaml
 kubectl apply -f ./arc-aks-apis-ingress.yaml
 ```
 
+### Test the Application flow
+
+Let us now test the application flow end-to-end
+
+#### Add Products
+
+```bash
+# Quantity > 10 and < 500 so will go to Products
+curl -X POST https://<dns-name>/sql/api/orders --data '{"name": "Civic23", "price": 1300.00, "desc": "Car", "quantity": 200}'
+```
+
+#### Add Returns
+
+```bash
+# Quantity < 10, too low, so will go to Returns
+curl -X POST https://<dns-name>/sql/api/orders --data '{"name": "Ciaz", "price": 800.00, "desc": "Car", "quantity": 8}'
+```
+
+#### Get Products
+
+```bash
+curl https://<dns-name>/sql/api/orders/products
+```
+
+#### Get Returns
+
+```bash
+curl https://<dns-name>/sql/api/orders/returns
+```
+
+#### Metrics
+
+![arc-aks-grafana-nodeport-1](./Assets/arc-aks-grafana-nodeport-1.png)
+
+![arc-aks-grafana-nodeport-2](./Assets/arc-aks-grafana-nodeport-2.png)
+
+![arc-aks-grafana-nodeport-3](./Assets/arc-aks-grafana-nodeport-3.png)
+
+![arc-aks-grafana-nodeport-4](./Assets/arc-aks-grafana-nodeport-4.png)
+
+![arc-aks-grafana-nodeport-5](./Assets/arc-aks-grafana-nodeport-5.png)
+
+![arc-aks-grafana-nodeport-6](./Assets/arc-aks-grafana-nodeport-6.png)
+
+#### Logs
+
+![arc-aks-kibana-nodeport](./Assets/arc-aks-kibana-nodeport.png)
+
+### Conclusion
+
+This end to end application flow depicts how two event driven applications - an Azure function app and a Logic App - can talk to each other seamlessly, **run anywhere** and can **maintain state anywhere** - using SQL Managed Instance as Containers and leveraging *Azure Arc-enabled k8s* and *Azure Arc-enabled Data Services*. This represents a cost effective, flexible, resilient way of running Cloud Native Apps on variety platforms - On-Premise, Edge or Cloud
+
+## References
