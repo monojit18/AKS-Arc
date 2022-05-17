@@ -85,7 +85,7 @@ az role assignment create --assignee $spAppId --role "Monitoring Metrics Publish
 echo $arcResourceGroupId
 
 az acr create -n $acrName -g $aksResourceGroup --sku STANDARD --admin-enabled false
-acrId=$(az acr show -n $acrName -g $aksResourceGroup --query="id" -o tsv)
+acrId=$(az acr show -n $acrName -g $arcsvcResourceGroup --query="id" -o tsv)
 echo $acrId
 az role assignment create --assignee $spAppId --role "AcrPull" --scope $acrId
 
@@ -102,7 +102,7 @@ az aks create --name $clusterName \
 --network-plugin $networkPlugin --network-policy $networkPolicy \
 --nodepool-name $sysNodePoolName --vm-set-type $vmSetType \
 --generate-ssh-keys \
---enable-aad \
+--disable-rbac \
 --attach-acr $acrName
 
 az aks get-credentials -g $aksResourceGroup --name $clusterName --admin --overwrite
@@ -128,88 +128,65 @@ az connectedk8s show -g $arcResourceGroup -n $connectedClusterName
 k get ns
 k get deployments,pods -n azure-arc
 
-Add AppService CLI extension for Arc
-====================================
 
-az extension add --upgrade --yes --name connectedk8s
-az extension add --upgrade --yes --name k8s-extension
-az extension add --upgrade --yes --name customlocation
-az extension add --upgrade --yes -n appservice-kube
+SQL MI on Arc
+==============
 
-az provider register --namespace Microsoft.ExtendedLocation --wait
-az provider show -n Microsoft.ExtendedLocation -o table
+brew tap microsoft/azdata-cli-release
+brew update
+brew install azdata-cli
 
-az provider register --namespace Microsoft.Web --wait
-az provider show -n Microsoft.Web -o table
+Install Azure Data Studio
 
-az provider register --namespace Microsoft.KubernetesConfiguration --wait
-az provider show -n Microsoft.KubernetesConfiguration -o table
+Install Data Controller
+=====================================
 
-#az extension remove --name appservice-kube
-#az extension add --yes --source "https://aka.ms/appsvc/appservice_kube-latest-py2.py3-none-any.whl"
-az extension show  -n appservice-kube -o table
+Data Source=tcp:<SQL MI Public IP>,<port>;Initial Catalog=<dbname>;User Id=<username>;Password=<password>;" --connection-string-type SQLAzure
+./opt/mssql-tools/bin/sqlcmd -S arcsqlmi-external-svc.aksarcdccloc.svc,1433 -U <username> -P <password>
 
-infra_rg=$(az aks show -g $aksResourceGroup -n $clusterName --output tsv --query nodeResourceGroup)
-echo $infra_rg
-az network public-ip create -g $infra_rg -n $clusterName-ext-appsvc-pip --sku STANDARD
-staticIp=$(az network public-ip show -g $infra_rg -n $clusterName-ext-appsvc-pip --output tsv --query ipAddress)
-echo $staticIp
+CREATE TABLE dbo.Products (ProductID nvarchar(50) PRIMARY KEY NOT NULL, ProductName varchar(25) NOT NULL, Price money NULL, Quantity float, ProductDescription varchar(max) NULL)
+GO
 
-Install App Extension - Apps
-=============================
+INSERT dbo.Products (ProductID, ProductName, Price, Quantity, ProductDescription) VALUES ("AD638233-1C86-42F8-AFB3-F4F325023790", 'Clamp', 12.48, 10, 'Workbench clamp')
+GO
 
-az k8s-extension create \
-    --resource-group $arcResourceGroup \
-    --name $extensionName \
-    --cluster-type connectedClusters \
-    --cluster-name $connectedClusterName \
-    --extension-type 'Microsoft.Web.Appservice' \
-    --release-train stable \
-    --auto-upgrade-minor-version true \
-    --scope cluster \
-    --release-namespace $extensionNamespace \
-    --configuration-settings "Microsoft.CustomLocation.ServiceAccount=default" \
-    --configuration-settings "appsNamespace=${extensionNamespace}" \
-    --configuration-settings "clusterName=${extensionName}" \
-    --configuration-settings "keda.enabled=true" \
-    --configuration-settings "buildService.storageClassName=default" \
-    --configuration-settings "buildService.storageAccessMode=ReadWriteOnce" \
-    --configuration-settings "customConfigMap=${extensionName}/kube-environment-config" \
-    --configuration-settings "envoy.annotations.service.beta.kubernetes.io/azure-load-balancer-resource-group=${arcResourceGroup}"
+CREATE TABLE dbo.Returns (ProductID nvarchar(50) PRIMARY KEY NOT NULL, ProductName varchar(25) NOT NULL, Quantity float, Reason varchar(max) NULL)
+GO
 
-  az k8s-extension show -c $connectedClusterName --cluster-type connectedClusters   -n $extensionName -g $arcResourceGroup
-  extensionId=$(az k8s-extension show --cluster-type connectedClusters --cluster-name $connectedClusterName \
-  --resource-group $arcResourceGroup --name $extensionName --query id --output tsv)
-  echo $extensionId
+INSERT dbo.Returns (ProductID, ProductName, Quantity, Reason) VALUES ("741942D6-4B39-4679-BCDA-C383D05920CA", 'Clamp2', 100, 'Workbench clamp2')
+GO
 
-#az resource wait --ids $extensionId --custom "properties.installState!='Pending'" --api-version "2020-07-01-preview"
-connectedClusterId=$(az connectedk8s show --resource-group $arcResourceGroup --name $connectedClusterName --query id --output tsv)
-echo $connectedClusterId
+https://<hostname>:<port>>/app/kibana#/discover?_a=(query:(language:kuery,query:'custom_resource_name:arcsqlmi'))
 
-az customlocation create --resource-group $arcResourceGroup --name $customLocationName --host-resource-id $connectedClusterId \
---namespace $extensionNamespace --cluster-extension-ids $extensionId
+openssl pkcs12 -in star.wkshpdev.com.pfx -nocerts -out star.wkshpdev.com.key
 
-az customlocation show --resource-group $arcResourceGroup --name $customLocationName
-customLocationId=$(az customlocation show --resource-group $arcResourceGroup --name $customLocationName --query id --output tsv)
-echo $customLocationId 
+#Secret for TLS for API+DC namespaces
+kubectl create secret tls api-arc-tls-secret -n apis --cert="$baseFolderPath/Certs/$certfile" --key="$baseFolderPath/Certs/$keyfile"
+kubectl create secret tls dc-arc-tls-secret -n aksarcdccloc --cert="$baseFolderPath/Certs/$certfile" --key="$baseFolderPath/Certs/$keyfile"
 
-az appservice kube create --resource-group $arcResourceGroup --name $extensionName --custom-location $customLocationId
-az appservice kube show --resource-group $arcResourceGroup --name $extensionName
-az appservice kube delete --resource-group $arcResourceGroup --name $extensionName
+# Build docker image
+docker build -t $acrName/<image_name>:<tag> .
 
-Cleanup - Apps
-==================
+# Create logic app as Container and Run locally
+docker run --name sqlarcmila -e AzureWebJobsStorage=$azureWebJobsStorage -e WORKFLOWAPP_AAD_TENANTID=<value> -e WORKFLOWAPP_AAD_CLIENTID=<value> -e WORKFLOWAPP_AAD_OBJECTID=<value> -r WORKFLOWAPP_AAD_CLIENTSECRET=<value> -d -p 8080:80 $acrName/<image_name>:<tag>
 
-#az appservice kube delete -n $extensionName -g $arcResourceGroup --yes
-#az k8s-extension delete -c $connectedClusterName --cluster-type connectedClusters -n $extensionName -g $arcResourceGroup --yes
-#az customlocation delete --resource-group $arcResourceGroup --name $customLocationName --yes
+========================================================================
 
+APIs
+======
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
 
-Cleanup - All
-===============
-#az connectedk8s delete -g $arcResourceGroup -n $connectedClusterName --yes
-#az aks delete -g $aksResourceGroup -n $clusterName --yes
+helm install arc-nginx-ingess ingress-nginx/ingress-nginx --namespace arc-nginx-ingess-ns \
+--set controller.replicaCount=2 \
+--set controller.nodeSelector.agentpool=arcsyspool \
+--set controller.defaultBackend.nodeSelector.agentpool=arcsyspool
 
+CSI Driver
+==============
+kubectl create ns apis
+kubectl create secret generic secrets-store-creds --from-literal clientid=$spAppId --from-literal clientsecret=$spPassword -n apis
+kubectl label secret secrets-store-creds secrets-store.csi.k8s.io/used=true -n apis
 
 Event Grid on Arc
 ==================
@@ -223,7 +200,7 @@ topicId=$(az eventgrid topic show --name $evgTopicName --resource-group $arcsvcR
 echo $topicId
 
 az eventgrid event-subscription create --name $eventSubName --source-resource-id $topicId \
---endpoint https://requestmessageappaks.arc-aks-cluster--ub7ipo4.eastus.k4apps.io/api/RequestMessageApp
+--endpoint https://<endpoint-host>>/api/RequestMessageApp
 
 #az eventgrid event-subscription delete --name $eventSubName --source-resource-id $topicId
 
@@ -232,7 +209,7 @@ az eventgrid topic key list --name $evgTopicName -g $arcsvcResourceGroup --query
 
 k get po -n $evgExtensionNamespace
 
-curl -kv -X POST -H "Content-Type: application/cloudevents-batch+json" -H "aeg-sas-key: fymIWyWkzOcoYbkeq9Ysm8L5pYQHE4Q+NLKeRLPgIyY=" \
+curl -kv -X POST -H "Content-Type: application/cloudevents-batch+json" -H "aeg-sas-key: <aeg-sas-key>>" \
 -g "http://eventgrid.aks-k8s-arc-cluster-ext-evg-messaging-ns:80/topics/aks-k8s-arc-cluster-ext-eg-evg-topic/api/events?api-version=2018-01-01" \
 -d  '[{ 
       "specversion": "1.0",
@@ -248,78 +225,7 @@ curl -kv -X POST -H "Content-Type: application/cloudevents-batch+json" -H "aeg-s
 }]'
 
 
+Cleanup
+========
 
-SQL MI on Arc
-==============
-
-username="sqlmiuser"
-password="SQLMi@2021"
-
-brew tap microsoft/azdata-cli-release
-brew update
-brew install azdata-cli
-
-Install Azure Data Studio
-
-Install Data Controller
-=====================================
-
-az extension add --name arcdata
-
-arcDCNamespace="arc-dc-ns"
-
-# Cleanup azure arc data service artifacts
-k delete crd datacontrollers.arcdata.microsoft.com
-k delete crd postgresqls.arcdata.microsoft.com
-k delete crd sqlmanagedinstances.sql.arcdata.microsoft.com
-k delete crd sqlmanagedinstancerestoretasks.tasks.sql.arcdata.microsoft.com
-k delete crd dags.sql.arcdata.microsoft.com
-k delete crd exporttasks.tasks.arcdata.microsoft.com
-k delete crd monitors.arcdata.microsoft.com
-
-k delete clusterrole arc:cr-arc-metricsdc-reader
-k delete clusterrolebinding arc:crb-arc-metricsdc-reader
-
-k delete apiservice v1beta1.arcdata.microsoft.com
-k delete apiservice v1beta1.sql.arcdata.microsoft.com
-
-az k8s-extension create -c $connectedClusterName -g $arcResourceGroup --name $arcDCExtension \
---cluster-type connectedClusters --extension-type microsoft.arcdataservices \
---auto-upgrade false --scope cluster --release-namespace $arcDCNamespace \
---config Microsoft.CustomLocation.ServiceAccount=sa-bootstrapper
-
-az k8s-extension show -c $connectedClusterName --cluster-type connectedClusters \
--n $arcDCExtension -g $arcResourceGroup
-
-arcDCextensionId=$(az k8s-extension show \
---cluster-type connectedClusters \
---cluster-name $connectedClusterName \
---resource-group $arcResourceGroup \
---name $arcDCExtension \
---query id \
---output tsv)
-echo $arcDCextensionId 
-
-k create ns $arcDCNamespace
-#k delete ns $arcDCNamespace
-
-k create -f ./custom-resource-definitions.yaml
-#k delete -f ./custom-resource-definitions.yaml
-
-k create -n $arcDCNamespace -f ./bootstrapper.yaml
-#k delete -n $arcDCNamespace -f ./bootstrapper.yaml
-
-k get pod -n $arcDCNamespace
-
-k create secret generic controller-login-secret -n $arcDCNamespace --from-literal=username=$username --from-literal=password=$password
-
-k create -n $arcDCNamespace -f ./data-controller.yaml
-#k delete -n $arcDCNamespace -f ./data-controller.yaml
-k get datacontroller/arc-dc -n $arcDCNamespace
-k get all -n $arcDCNamespace
-
-azdata arc sql mi create --help
-azdata arc sql mi create -n sqlmiarc --storage-class-data managed-premium --storage-class-logs managed-premium
-azdata arc sql mi list
-
-topicname=akarcegtopic2
+az aks delete -g $aksResourceGroup -n $clusterName
