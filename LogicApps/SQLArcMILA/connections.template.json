@@ -1,0 +1,18 @@
+{
+  "managedApiConnections": {
+    "outlook": {
+      "api": {
+        "id": "/subscriptions/<subscriptionId>/providers/Microsoft.Web/locations/eastus/managedApis/outlook"
+      },
+      "connection": {
+        "id": "/subscriptions/<subscriptionId>/resourceGroups/arc-services-rg/providers/Microsoft.Web/connections/outlook"
+      },
+      "connectionRuntimeUrl": "<connectionRuntimeUrl from portal>",
+      "authentication": {
+        "type": "Raw",
+        "scheme": "Key",
+        "parameter": "@appsetting('outlook-connectionKey')"
+      }
+    }
+  }
+}

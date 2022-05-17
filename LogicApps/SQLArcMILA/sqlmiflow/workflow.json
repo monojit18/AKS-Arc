@@ -12,7 +12,7 @@
                     },
                     "method": "post",
                     "body": {
-                        "To": "datta.monojit@gmail.com; monojit.datta@yahoo.in",
+                        "To": "<recipient email ids>",
                         "Subject": "URGENT: Product @{triggerBody()?['id']} will be returned!",
                         "Body": "<p>Dear Sir/Madam,<br>\n<br>\nThis is to inform you that the your Order for @{triggerBody()?['quantity']} &nbsp;items of &nbsp;@{triggerBody()?['name']} with Id @{triggerBody()?['id']} has been rejected due to the following reason: @{triggerBody()?['reason']}.<br>\n<br>\nWe hope to work with you in near future.<br>\nThanks.<br>\n</p>"
                     },
