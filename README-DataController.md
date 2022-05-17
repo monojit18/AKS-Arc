@@ -217,7 +217,7 @@ az aks get-credentials -g $aksResourceGroup --name $clusterName --admin --overwr
 > - This command also configures the .kubeconfig on local machine
 > - All subsequent commands for Azure Arc will take effect on this K8s cluster only
 
-So we have now created a basic AKS cluster which will be hosting our Applications (*Azure Function* and *Logic App*) and SQL MI Database instance and help us to build an end-to-end use case
+So we have now created a basic AKS cluster which will be hosting our Applications (*Azure Function* and *Logic App*) and SQL MI Database instance and help us to build an end-to-end use case.
 
 ### On-board AKS cluster on Azure Arc
 
@@ -250,19 +250,17 @@ az connectedk8s show -g $arcResourceGroup -n $connectedClusterName
 >
 > Wait till status is *Connected* - this is when AKS cluster in fully on-boarded onto Azure Arc
 
-The next task will be to Deploy the Data Controller Extension onto Azure Arc-enabled AKS cluster
+The next task will be to Deploy the Data Controller Extension onto Azure Arc-enabled AKS cluster.
 
 ### Deploy Data Controller Extension
 
 ![arc-aks-extension](./Assets/arc-aks-extension.png)
 
-Select Add and follow the on-screen instructions. Following set of diagrams would show how the creation process works and finally deploys a Data controller extension onto Azure Arc-enabled AKS cluster
+Select Add and follow the on-screen instructions. Following set of diagrams would show how the creation process works and finally deploys a Data controller extension onto Azure Arc-enabled AKS cluster.
 
 ![arc-aks-dc-menu](./Assets/arc-aks-dc-menu.png)
 
-
-
-Select **Create** and fill up all the details to complete the create the Data Controller extension
+Select **Create** and fill up all the details to complete the create the Data Controller extension.
 
 ![arc-aks-dc-create-1](./Assets/arc-aks-dc-create-1.png)
 
@@ -270,7 +268,7 @@ Provide a Name to the **Custom Location**
 
 > [!NOTE]
 >
-> Azure Arc will create a namespace on AKS cluster with this which can be used to track the progress of subsequent deployments
+> Azure Arc will create a namespace on AKS cluster with this which can be used to track the progress of subsequent deployments.
 
 ![arc-aks-dc-create-2](./Assets/arc-aks-dc-create-2.png)
 
@@ -307,13 +305,13 @@ kubectl get datacontrollers -A -w
 
 ![arc-aks-dc-deploy-state-change-2](./Assets/arc-aks-dc-deploy-state-change-2.png)
 
-Wait for the status to **Ready**. At this stage entire Data Controller setup is complete and we are ready to move further
+Wait for the status to **Ready**. At this stage entire Data Controller setup is complete and we are ready to move further.
 
 ### Deploy SQL Managed Instances
 
 Since now our Data Controller extension is ready on Azure Arc-enabled Kubernetes; we will now go-ahead and deploy SQL Managed Instance onto this.
 
-As we have done for Data Controller extension, we will do the SQL MI deployment through portal and check the status in Azure CLI. Following figures should explain the steps
+As we have done for Data Controller extension, we will do the SQL MI deployment through portal and check the status in Azure CLI. Following figures should explain the steps.
 
 ![arc-aks-dc-sqlmi-1](./Assets/arc-aks-dc-sqlmi-1.png)
 
@@ -336,7 +334,7 @@ As we have done for Data Controller extension, we will do the SQL MI deployment 
 
 ![arc-aks-dc-sqlmi-3](./Assets/arc-aks-dc-sqlmi-3.png)
 
-Select **Create** and deploy SQL MI containers onto the AKS cluster. Check the status of the progress in the Azure CLI
+Select **Create** and deploy SQL MI containers onto the AKS cluster. Check the status of the progress in the Azure CLI.
 
 ```bash
 kubectl get pods -n arcaksdccloc -w
@@ -456,7 +454,7 @@ GO
 
   > [!TIP]
   >
-  > Note down the Storage Account credentials, **ConnectionString**, which will needed later
+  > Note down the Storage Account credentials, **ConnectionString**, which will needed later.
 
 #### SQLArcMILA
 
@@ -604,7 +602,7 @@ GO
 
 #### Deploy Applications onto AKS cluster
 
-We will now configure the AKS cluster and deploy few additional resources to make the deployment work seamlessly for both Function App and Logic App and thus for the entire end-to-end flow
+We will now configure the AKS cluster and deploy few additional resources to make the deployment work seamlessly for both Function App and Logic App and thus for the entire end-to-end flow.
 
 > [!TIP]
 >
@@ -651,7 +649,7 @@ kubectl apply -f ./sqlconnectarcapp.yaml
 
 > [!NOTE]
 >
-> Although we have deployed all applications and services onto the AKS cluster, the major services for Data Controller extension are all **NodePort** and services for the applications are all **Cluster IP**; hence we would need an **Ingress Controller** which will be public facing Load Balancer and with a **Public IP**. This Ingress Controller along with **K8s Ingress** routing will send traffic to appropriate backend services - for *Application services* as well as for *Data Controller extension services*
+> Although we have deployed all applications and services onto the AKS cluster, the major services for Data Controller extension are all **NodePort** and services for the applications are all **Cluster IP**; hence we would need an **Ingress Controller** which will be public facing Load Balancer and with a **Public IP**. This Ingress Controller along with **K8s Ingress** routing will send traffic to appropriate backend services - for *Application services* as well as for *Data Controller extension services*.
 
 #### Deploy Nginx Ingress Controller
 
@@ -677,7 +675,7 @@ kubectl get svc -n arc-nginx-ingess-ns -w
 
 #### Deploy K8s Ingress
 
-We will need two Ingress objects - one for Application services and one for Data Controller Extension services as they are deployed onto two different namespaces
+We will need two Ingress objects - one for Application services and one for Data Controller Extension services as they are deployed onto two different namespaces.
 
 > [!NOTE]
 >
@@ -702,7 +700,7 @@ kubectl apply -f ./arc-aks-apis-ingress.yaml
 
 ### Test the Application flow
 
-Let us now test the application flow end-to-end
+Let us now test the application flow end-to-end.
 
 #### Add Products
 
@@ -734,7 +732,7 @@ curl https://<dns-name>/sql/api/orders/returns
 
 > [!TIP]
 >
-> An A-record has to be created with the Public IP of the Nginx Ingress Controller pointing to grafanaarc.<dns-name>
+> An A-record has to be created with the Public IP of the Nginx Ingress Controller pointing to grafanaarc.<dns-name>.
 
 ```bash
 # In a browser type
@@ -757,7 +755,7 @@ https://grafanaarc.<dns-name>
 
 > [!TIP]
 >
-> An A-record has to be created with the Public IP of the Nginx Ingress Controller pointing to kibanaarc.<dns-name>
+> An A-record has to be created with the Public IP of the Nginx Ingress Controller pointing to kibanaarc.<dns-name>.
 
 ```bash
 # In a browser type
@@ -768,7 +766,7 @@ https://kibanaarc.<dns-name>/app/kibana#/discover?_a=(query:(language:kuery,quer
 
 ### Conclusion
 
-This end to end application flow depicts how multiple event driven applications - two n this case, an Azure function app and a Logic App - can talk to each other seamlessly, **run anywhere** and can **maintain state anywhere** - using SQL Managed Instance as Containers and leveraging *Azure Arc-enabled k8s* and *Azure Arc-enabled Data Services*. This represents a cost effective, flexible, resilient way of running Cloud Native Apps on variety platforms - On-Premise, Edge or Cloud
+This end to end application flow depicts how multiple event driven applications - two n this case, an Azure function app and a Logic App - can talk to each other seamlessly, **run anywhere** and can **maintain state anywhere** - using SQL Managed Instance as Containers and leveraging *Azure Arc-enabled k8s* and *Azure Arc-enabled Data Services*. This represents a cost effective, flexible, resilient way of running Cloud Native Apps on variety platforms - **On-Premise**, **Edge** or **Cloud**.
 
 ## References
 
