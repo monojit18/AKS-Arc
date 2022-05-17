@@ -538,7 +538,7 @@ GO
 
   > [!TIP]
   >
-  > Now down this **master key**. This will be used by local Logic App docker container to call Logic App Apis internally. Please note, since we are not using the Azure portal and its designer, it is our responsibility to call Logic App Apis internally, to get the metadata information e.g. the Post Url of the Http triggered Logic App.
+  > Note down this **master key**. This will be used by local Logic App docker container to call Logic App Apis internally. Please note, since we are not using the Azure portal and its designer, it is our responsibility to call Logic App Apis internally, to get the metadata information e.g. the Post Url of the Http triggered Logic App.
 
 - At this point we are all set to test the Logic App locally from any rest client like *Postman*
 
