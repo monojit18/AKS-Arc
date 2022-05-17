@@ -1,4 +1,4 @@
-# Connected Micro-services with Azure Arc using Kubernetes and SQL Managed Instance
+# Connected Micro-services with Azure Arc-enabled Kubernetes and SQL Managed Instance
 
 ## Introduction
 
@@ -225,9 +225,7 @@ az extension add --name connectedk8s
 az provider register --namespace Microsoft.Kubernetes
 az provider register --namespace Microsoft.KubernetesConfiguration
 az provider register --namespace Microsoft.ExtendedLocation
-```
 
-```bash
 # on-board AKS cluster onto Azure Arc
 az connectedk8s connect -g $arcResourceGroup -n $connectedClusterName
 ```
