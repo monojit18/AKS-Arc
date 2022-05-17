@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - "*.wkshpdev.com"
+    - "*.<dns-name>"
     secretName: api-arc-tls-secret
   rules:
-  - host: apiarc.wkshpdev.com
+  - host: apiarc.<dns-name>
     http:
       paths:
       - path: /sql/?(.*)

@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - "*.wkshpdev.com"
+    - "*.<dns-name>"
     secretName: dc-arc-tls-secret
   rules:
-  - host: grafanaarc.wkshpdev.com
+  - host: grafanaarc.<dns-name>
     http:
       paths:
       - path: /?(.*)
@@ -23,7 +23,7 @@ spec:
             name: metricsui-external-svc
             port:
               number: 3000
-  - host: kibanaarc.wkshpdev.com
+  - host: kibanaarc.<dns-name>
     http:
       paths:
       - path: /?(.*)
