@@ -771,3 +771,10 @@ https://kibanaarc.<dns-name>/app/kibana#/discover?_a=(query:(language:kuery,quer
 This end to end application flow depicts how multiple event driven applications - two n this case, an Azure function app and a Logic App - can talk to each other seamlessly, **run anywhere** and can **maintain state anywhere** - using SQL Managed Instance as Containers and leveraging *Azure Arc-enabled k8s* and *Azure Arc-enabled Data Services*. This represents a cost effective, flexible, resilient way of running Cloud Native Apps on variety platforms - On-Premise, Edge or Cloud
 
 ## References
+
+- [Source Code](https://github.com/monojit18/AKS-Arc) at Github
+- [Azure Arc-enabled data services](https://docs.microsoft.com/en-us/azure/azure-arc/data/overview)
+- [Azure Arc-enabled Kubernetes](https://docs.microsoft.com/en-us/azure/azure-arc/kubernetes/overview)
+- [SQL managed instance on Azure Arc](https://docs.microsoft.com/en-us/azure/azure-arc/data/create-sql-managed-instance?tabs=indirectly)
+- [Run Logic App Anywhere](https://techcommunity.microsoft.com/t5/integrations-on-azure-blog/run-logic-app-anywhere/ba-p/3118351)
+
