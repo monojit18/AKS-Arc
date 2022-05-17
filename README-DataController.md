@@ -100,14 +100,10 @@ az login --tenant $tenantId
 ```bash
 # Resoure group for all Arc-enabled resources
 az group create -n $arcResourceGroup -l $location
-```
 
-```bash
 # Resoure group for all AKS cluster and related resources
 az group create -n $aksResourceGroup -l $location
-```
 
-```bash
 # Resoure group for all Application services
 az group create -n $arcsvcResourceGroup -l $location
 ```
