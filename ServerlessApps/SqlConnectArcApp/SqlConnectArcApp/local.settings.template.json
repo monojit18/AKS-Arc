@@ -1,0 +1,10 @@
+﻿{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+        "SQLConnectionString": "Data Source=<server-ip>,<port>;Initial Catalog=<db>;User Id=<username>;Password=<password>;",
+        "LOGICAPP_CALLBACK_URL": "http://sqlarcmila-svc.apis.svc/runtime/webhooks/workflow/api/management/workflows/sqlmiflow/triggers/manual/listCallbackUrl?api-version=2020-05-01-preview&code=<Code>",
+        "LOGICAPP_POST_URL": "http://sqlarcmila-svc.apis.svc/api/sqlmiflow/triggers/manual/invoke?api-version=2020-05-01-preview&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig={0}"
+    }
+}
