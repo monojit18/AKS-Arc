@@ -489,6 +489,22 @@ We will now configure the AKS cluster and deploy few additional resources to mak
 > - Provide Get and List access to they Service Principal for the **Keys**, **Secrets** and **Certificates**
 > - CSI driver will use this Service Principal to access KeyVault and fetch the secret values
 
+##### Add Secrets to KeyVault
+
+Add following Secrets to the KeyVault from Azure Portal; these Secrets are used across Function App and Logic App. All these information are already available from the above discussions:
+
+- **AzureWebJobsStorage**
+- **SQLConnectionString**
+- **LOGICAPP-CALLBACK-URL**
+- **LOGICAPP-POST-URL**
+- **WORKFLOWAPP-AAD-CLIENTID**
+- **WORKFLOWAPP-AAD-CLIENTSECRET**
+- **WORKFLOWAPP-AAD-OBJECTID**
+- **WORKFLOWAPP-AAD-TENANTID**
+- **outlook-connectionKey**
+
+##### Deploy Applications
+
 ```bash
 # Create a namespace for APIs - this will host both Function App and Logic App
 kubectl create ns apis
@@ -593,6 +609,15 @@ curl https://<dns-name>/sql/api/orders/returns
 
 #### Metrics
 
+> [!TIP]
+>
+> An A-record has to be created with the Public IP of the Nginx Ingress Controller pointing to grafanaarc.<dns-name>
+
+```bash
+# In a browser type
+https://grafanaarc.<dns-name>
+```
+
 ![arc-aks-grafana-nodeport-1](./Assets/arc-aks-grafana-nodeport-1.png)
 
 ![arc-aks-grafana-nodeport-2](./Assets/arc-aks-grafana-nodeport-2.png)
@@ -606,6 +631,15 @@ curl https://<dns-name>/sql/api/orders/returns
 ![arc-aks-grafana-nodeport-6](./Assets/arc-aks-grafana-nodeport-6.png)
 
 #### Logs
+
+> [!TIP]
+>
+> An A-record has to be created with the Public IP of the Nginx Ingress Controller pointing to kibanaarc.<dns-name>
+
+```bash
+# In a browser type
+https://kibanaarc.<dns-name>/app/kibana#/discover?_a=(query:(language:kuery,query:'custom_resource_name:arcsqlmi'))
+```
 
 ![arc-aks-kibana-nodeport](./Assets/arc-aks-kibana-nodeport.png)
 
