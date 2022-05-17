@@ -482,10 +482,10 @@ GO
   - **WORKFLOWS_LOCATION_NAME** - **Location** of the Logic App
   - **WORKFLOWS_MANAGEMENT_BASE_URI** - https://management.azure.com/
   - **WORKFLOWAPP_AAD_TENANTID** - **TenantId** of the sub scripting being used
-  - **WORKFLOWAPP_AAD_CLIENTID** - **appId** of the Service Princiapl
-  - **WORKFLOWAPP_AAD_CLIENTSECRET** - **password** of the Service Princiapl
+  - **WORKFLOWAPP_AAD_CLIENTID** - **appId** of the Service Principal
+  - **WORKFLOWAPP_AAD_CLIENTSECRET** - **password** of the Service Principal
   - **WORKFLOWAPP_AAD_OBJECTID** - **ObjectId** of the user in Azure AD
-  - **outlook-connectionKey** - *This will be assigned by the Logic App designer when we establish the **Outlook.com** conenction*
+  - **outlook-connectionKey** - *This will be assigned by the Logic App designer when we establish the **Outlook.com** connection*
 
 - Open the LogicApps/SQLArcMILA/sqlmiflow/workflow.json file in Logic App Designer from within VS Code
 
@@ -574,7 +574,7 @@ GO
 - If everything is ok then we should get an Email. Let us now build and push this Logic app image to **Azure Container Registry**
 
   ```bash
-  az acr build -t <acrName>.azurecr.io/sqlconenctarcapp:v1.0.0 -r <acrName> .
+  az acr build -t <acrName>.azurecr.io/sqlconnectarcapp:v1.0.0 -r <acrName> .
   ```
 
 #### SqlConnectArcApp
@@ -599,7 +599,7 @@ GO
 - Build the Function App and Push to Azure Container Registry
 
   ```bash
-  az acr build -t <acrName>.azurecr.io/sqlconenctarcapp:v1.0.0 -r <acrName> .
+  az acr build -t <acrName>.azurecr.io/sqlconnectarcapp:v1.0.0 -r <acrName> .
   ```
 
 #### Deploy Applications onto AKS cluster
