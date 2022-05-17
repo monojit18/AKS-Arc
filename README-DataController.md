@@ -450,12 +450,132 @@ GO
 
 ### Applications
 
-Clone the repo
+- Clone the [Repository](https://github.com/monojit18/AKS-Arc)
+
+- Create a **Storage Account** from the Azure Portal for Function app and Logic App to cache metadata and state
+
+  > [!TIP]
+  >
+  > Note down the Storage Account credentials, **ConnectionString**, which will needed later
 
 #### SQLArcMILA
 
+> [!NOTE]
+>
+> This Logic App is going to have a **Outlook.com** connection for sending emails. Any such API connections need a *Service Principal* to be created and given appropriate permission so that Logic App, running as a container (anywhere).
+
 - Please follow this [Blog](https://techcommunity.microsoft.com/t5/integrations-on-azure-blog/run-logic-app-anywhere/ba-p/3118351) link for details on how to deploy Logic app as container
-- Go to 
+
+- Create a **Service Principal** by any standard means - Portal or CLI; note down the **appId** and **password** values. Let us call it **aks-arc-la-sp** for our easy reference later
+
+- Open the project in *Visual Studio Code*
+
+- Go to **LogicApps/SQLArcMILA**
+
+- Open **local.settings.tmpl.json**
+
+  - Rename the file to **local.settings.json**
+  - **AzureWebJobsStorage** - Replace it by the Storage Account connection string
+  - **WORKFLOWS_TENANT_ID** - **TenantId** of the sub scripting being used
+  - **WORKFLOWS_SUBSCRIPTION_ID** - **SubscriptionId** being used
+  - **WORKFLOWS_RESOURCE_GROUP_NAME** - **Resource Group** for the Logic App
+  - **WORKFLOWS_LOCATION_NAME** - **Location** of the Logic App
+  - **WORKFLOWS_MANAGEMENT_BASE_URI** - https://management.azure.com/
+  - **WORKFLOWAPP_AAD_TENANTID** - **TenantId** of the sub scripting being used
+  - **WORKFLOWAPP_AAD_CLIENTID** - **appId** of the Service Princiapl
+  - **WORKFLOWAPP_AAD_CLIENTSECRET** - **password** of the Service Princiapl
+  - **WORKFLOWAPP_AAD_OBJECTID** - **ObjectId** of the user in Azure AD
+  - **outlook-connectionKey** - *This will be assigned by the Logic App designer when we establish the **Outlook.com** conenction*
+
+- Open the LogicApps/SQLArcMILA/sqlmiflow/workflow.json file in Logic App Designer from within VS Code
+
+  ![arc-aks-sqlarcmila-designer](./Assets/arc-aks-sqlarcmila-designer.png)
+
+- The *Connection* object will be shown as an error as we need to reconfigure the connection here. Follow the On-screen instructions and complete the connection
+
+- Once done, there will be **connection.json** file created within the workspace with the details of Outlook.com connection
+
+- An API Connection will be created in the Azure portal; add the above service principal - **aks-arc-la-sp** in the *Access Policies* section
+
+  ![arc-aks-api-connection](./Assets/arc-aks-api-connection.png)
+
+- Review **connections.json**
+
+  ```json
+  {
+    "managedApiConnections": {
+      "outlook": {
+        "api": {
+          "id": "/subscriptions/<subscriptionId>/providers/Microsoft.Web/locations/eastus/managedApis/outlook"
+        },
+        "connection": {
+          "id": "/subscriptions/<subscriptionId>/resourceGroups/arc-services-rg/providers/Microsoft.Web/connections/outlook"
+        },
+        "connectionRuntimeUrl": "https://<xxx>.common.logic-eastus.azure-apihub.net/apim/outlook/<yyy>/",
+        "authentication": {
+          "type": "Raw",
+          "scheme": "Key",
+          "parameter": "@appsetting('outlook-connectionKey')"
+        }
+      }
+    }
+  }
+  ```
+
+- Review **local.settings.json** file and look for **outlook-connectionKey** value
+
+  ```json
+  "outlook-connectionKey": "eyJ0eXAiOiJKV1QiLCJhbGciOi..........DPm0j1LWJ1FmgptA"
+  ```
+
+- We are now all set build and deploy this Logic App Locally
+
+  ```bash
+  # Build docker image
+  docker build -t $acrName/<image_name>:<tag> .
+  
+  # Create logic app as Container and Run locally
+  docker run --name sqlarcmila -e AzureWebJobsStorage=$azureWebJobsStorage -e WORKFLOWAPP_AAD_TENANTID=<value> -e WORKFLOWAPP_AAD_CLIENTID=<value> -e WORKFLOWAPP_AAD_OBJECTID=<value> -r WORKFLOWAPP_AAD_CLIENTSECRET=<value> -d -p 8080:80 $acrName/<image_name>:<tag>
+  ```
+
+- Once the docker container is created locally, go to the Storage account in Azure  portal
+
+  ![arc-aks-master-key](./Assets/arc-aks-master-key.png)
+
+  ![arc-aks-master-key-value](./Assets/arc-aks-master-key-value.png)
+
+  > [!TIP]
+  >
+  > Now down this **master key**. This will be used by local Logic App docker container to call Logic App Apis internally. Please note, since we are not using the Azure portal and its designer, it is our responsibility to call Logic App Apis internally, to get the metadata information e.g. the Post Url of the Http triggered Logic App.
+
+- At this point we are all set to test the Logic App locally from any rest client like *Postman*
+
+  ```bash
+  # Get the POST url for the Logic App
+  curl -X POST http://localhost:8080/runtime/webhooks/workflow/api/management/workflows/sqlmiflow/triggers/manual/listCallbackUrl?api-version=2020-05-01-preview&code=<master key>
+  
+  # Response
+  {
+      "value": "https://localhost:443/api/sqlmiflow/triggers/manual/invoke?api-version=2020-05-01-preview&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=<signature>",
+      "method": "POST",
+      "basePath": "https://localhost/api/sqlmiflow/triggers/manual/invoke",
+      "queries": {
+          "api-version": "2020-05-01-preview",
+          "sp": "/triggers/manual/run",
+          "sv": "1.0",
+          "sig": "<signature>"
+      }
+  }
+  
+  # Use the Signature value to form the POST url for the Logic App and call it
+  curl -X POST http://localhost:8080/api/sqlmiflow/triggers/manual/invoke?api-version=2020-05-01-preview&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Spk4kvmvXDgfyTxXREVm8SgvIH_LK49aECRZn8NkPCk --data '{"id": "56C394F1-7448-4D28-B44D-1CB6A4579646", "name": "local22", "quantity": 300, "reason": "high"}'
+  ```
+
+- If everything is ok then we should get an Email. Let us now build and push this Logic app image to **Azure Container Registry**
+
+  ```bash
+  az acr build -t <acrName>.azurecr.io/sqlconenctarcapp:v1.0.0 -r <acrName> .
+  ```
 
 #### SqlConnectArcApp
 
