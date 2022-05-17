@@ -450,9 +450,12 @@ GO
 
 ### Applications
 
+Clone the repo
+
 #### SQLArcMILA
 
-- A 
+- Please follow this [Blog](https://techcommunity.microsoft.com/t5/integrations-on-azure-blog/run-logic-app-anywhere/ba-p/3118351) link for details on how to deploy Logic app as container
+- Go to 
 
 #### SqlConnectArcApp
 
@@ -464,7 +467,7 @@ GO
 
 ##### Deploy Function App
 
-- Clone the repo
+- Go to **ServerlessApps/SqlConnectArcApp/SqlConnectArcApp** folder
 
 - Open **local.settings.tmpl.json**
 
