@@ -452,9 +452,15 @@ GO
 
 #### SQLArcMILA
 
+- A Logic App which is http triggered and accepts an *Order* for a *Product*
+- These are primarily the rejected Orders which are of High value or Low value
+- The Rejected Order information is then sent to the intended recipients over an email
+
 > [!NOTE]
 >
 > This Logic App is going to have a **Outlook.com** connection for sending emails. Any such API connections need a *Service Principal* to be created and given appropriate permission so that Logic App, running as a container (anywhere).
+
+##### Deploy Logic App
 
 - Please follow this [Blog](https://techcommunity.microsoft.com/t5/integrations-on-azure-blog/run-logic-app-anywhere/ba-p/3118351) link for details on how to deploy Logic app as container
 
