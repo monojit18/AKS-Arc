@@ -470,7 +470,7 @@ GO
 
 - Go to **LogicApps/SQLArcMILA**
 
-- Open **local.settings.tmpl.json**
+- Open **local.settings.template.json**
 
   - Rename the file to **local.settings.json**
   - **AzureWebJobsStorage** - Replace it by the Storage Account connection string
