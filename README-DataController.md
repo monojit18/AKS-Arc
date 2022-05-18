@@ -587,7 +587,7 @@ GO
 
 - Go to **ServerlessApps/SqlConnectArcApp/SqlConnectArcApp** folder
 
-- Open **local.settings.tmpl.json**
+- Open **local.settings.template.json**
 
   - Rename the file to **local.settings.json**
   - **SQLConnectionString** - Replace **UserName** and **Password** with appropriate values as set before
