@@ -566,13 +566,13 @@ GO
   }
   
   # Use the Signature value to form the POST url for the Logic App and call it
-  curl -X POST http://localhost:8080/api/sqlmiflow/triggers/manual/invoke?api-version=2020-05-01-preview&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Spk4kvmvXDgfyTxXREVm8SgvIH_LK49aECRZn8NkPCk --data '{"id": "56C394F1-7448-4D28-B44D-1CB6A4579646", "name": "local22", "quantity": 300, "reason": "high"}'
+  curl -X POST http://localhost:8080/api/sqlmiflow/triggers/manual/invoke?api-version=2020-05-01-preview&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=<signature> --data '{"id": "56C394F1-7448-4D28-B44D-1CB6A4579646", "name": "local22", "quantity": 300, "reason": "high"}'
   ```
 
 - If everything is ok then we should get an Email. Let us now build and push this Logic app image to **Azure Container Registry**
 
   ```bash
-  az acr build -t <acrName>.azurecr.io/sqlconnectarcapp:v1.0.0 -r <acrName> .
+  az acr build -t <acrName>.azurecr.io/sqlarcmila:v1.0.0 -r <acrName> .
   ```
 
 #### SqlConnectArcApp
@@ -591,7 +591,7 @@ GO
 
   - Rename the file to **local.settings.json**
   - **SQLConnectionString** - Replace **UserName** and **Password** with appropriate values as set before
-  - **LOGICAPP_CALLBACK_URL** - Replace **Code** by the mastery from Azure Storage as explained in the Logic App deployment section
+  - **LOGICAPP_CALLBACK_URL** - Replace **Code** by the **master key** from Azure Storage as explained in the Logic App deployment section
   - **LOGICAPP_POST_URL** - Nothing to be changed here; this will be set appropriately by the function app itself
 
 - Build the Function App and Push to Azure Container Registry
