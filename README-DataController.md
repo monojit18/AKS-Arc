@@ -585,7 +585,7 @@ GO
 
 ##### Deploy Function App
 
-- Go to **ServerlessApps/SqlConnectArcApp/SqlConnectArcApp** folder
+- Go to **Functions/SqlConnectArcApp/SqlConnectArcApp** folder
 
 - Open **local.settings.template.json**
 
