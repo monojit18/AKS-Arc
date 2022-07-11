@@ -1,8 +1,10 @@
 !.gitignore
+**/.DS_Store
+**/.vs
 !README.md
 Archive
-Certs
-Misc/commands.txt
+**/Certs
+**/Misc/commands.txt
 **/local.settings.json
 **/connections.json
 **/bin
